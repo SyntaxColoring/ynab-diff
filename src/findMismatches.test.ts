@@ -33,8 +33,8 @@ describe("findMismatches()", () => {
     ];
     const result = findMismatches(ynab, bank);
     expect(result).toStrictEqual([
-      { amount: currency("$300.00"), ynabCount: 1, bankCount: 0 },
       { amount: currency("$150.00"), ynabCount: 0, bankCount: 2 },
+      { amount: currency("$300.00"), ynabCount: 1, bankCount: 0 },
     ]);
   });
   it("should match based on numeric equivalency, not string equivalency", () => {

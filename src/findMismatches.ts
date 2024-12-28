@@ -24,9 +24,10 @@ export function findMismatches(
     entry.bankCount++;
   }
 
-  const mismatches = [...possibleMismatches.values()]
-    .filter((m) => m.bankCount != m.ynabCount)
-    .sort();
+  const mismatches = [...possibleMismatches.values()].filter(
+    (m) => m.bankCount != m.ynabCount,
+  );
+  mismatches.sort((a, b) => a.amount.intValue - b.amount.intValue);
   return mismatches;
 }
 
