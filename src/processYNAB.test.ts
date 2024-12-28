@@ -1,10 +1,6 @@
-import { describe, expect, it, test } from "vitest";
+import { describe, expect, it } from "vitest";
 
-import {
-  parseYNABCSV,
-  YNABTransaction,
-  YNABSubtransaction,
-} from "./processYNAB";
+import { parseYNABCSV, YNABTransaction } from "./processYNAB";
 import currency from "currency.js";
 
 describe("parseYNABCSV()", () => {
