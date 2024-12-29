@@ -1,36 +1,26 @@
 import currency from "currency.js";
 
 export function findMismatches(
-  ynabTransactionAmounts: TransactionAmount[],
-  bankTransactionAmounts: TransactionAmount[],
+  ynabTransactionAmounts: currency[],
+  bankTransactionAmounts: currency[],
 ): Mismatch[] {
   const possibleMismatches = new Map<number, Mismatch>();
 
   for (const amount of ynabTransactionAmounts) {
-    const entry = createOrGet(
-      possibleMismatches,
-      amount.parsedAmount.intValue,
-      {
-        sourceString: amount.sourceString,
-        parsedAmount: amount.parsedAmount,
-        ynabCount: 0,
-        bankCount: 0,
-      },
-    );
+    const entry = createOrGet(possibleMismatches, amount.intValue, {
+      amount,
+      ynabCount: 0,
+      bankCount: 0,
+    });
     entry.ynabCount++;
   }
 
   for (const amount of bankTransactionAmounts) {
-    const entry = createOrGet(
-      possibleMismatches,
-      amount.parsedAmount.intValue,
-      {
-        sourceString: amount.sourceString,
-        parsedAmount: amount.parsedAmount,
-        ynabCount: 0,
-        bankCount: 0,
-      },
-    );
+    const entry = createOrGet(possibleMismatches, amount.intValue, {
+      amount,
+      ynabCount: 0,
+      bankCount: 0,
+    });
     entry.bankCount++;
   }
 
@@ -40,14 +30,8 @@ export function findMismatches(
   return mismatches;
 }
 
-export interface TransactionAmount {
-  sourceString: string; // Preserved so we don't have to guess the display format.
-  parsedAmount: currency;
-}
-
 export interface Mismatch {
-  sourceString: string;
-  parsedAmount: currency;
+  amount: currency;
   ynabCount: number;
   bankCount: number;
 }
