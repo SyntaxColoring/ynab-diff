@@ -1,25 +1,6 @@
 import currency from "currency.js";
 import { parse as csvParseSync } from "csv-parse/browser/esm/sync";
-
-export interface YNABTransaction {
-  account: string;
-  flag: string;
-  date: string;
-  payee: string;
-  categoryGroup: string;
-  category: string;
-  memo: string;
-  outflow: currency;
-  cleared: "cleared" | "uncleared" | "reconciled";
-  subtransactions: YNABSubtransaction[];
-}
-
-export type YNABSubtransaction = Omit<
-  YNABTransaction,
-  "account" | "flag" | "date" | "cleared" | "subtransactions"
->;
-
-export class ParseError extends Error {}
+import { ParseError, YNABSubtransaction, YNABTransaction } from "./types";
 
 const EXPECTED_YNAB_CSV_COLUMNS = [
   "Account",
