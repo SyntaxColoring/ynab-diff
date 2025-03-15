@@ -1,36 +1,53 @@
 import currency from "currency.js";
+
 import { parse as csvParseSync } from "csv-parse/browser/esm/sync";
-import { BankTransaction, ParsedBankCSV } from "./types";
+import { BankValue, BankColumnType, BankTransaction } from "./types";
 
 export function parseBankCSV(
   input: string,
-  inflowColumns: Set<string>,
-  outflowColumns: Set<string>,
   numRecordLimit?: number,
-): ParsedBankCSV {
-  const transactions: BankTransaction[] = csvParseSync(input, {
-    columns: true,
-    to: numRecordLimit,
-    onRecord(rawRecord: Record<string, string>): BankTransaction {
-      const outflow = [...outflowColumns.values()].reduce(
-        (prevOutflow, columnName) =>
-          prevOutflow.add(rawRecord[columnName] || 0),
-        currency(0),
-      );
-      const inflow = [...inflowColumns.values()].reduce(
-        (prevInflow, columnName) => prevInflow.add(rawRecord[columnName] || 0),
-        currency(0),
-      );
-      return {
-        outflow: outflow.subtract(inflow),
-        rawValues: rawRecord,
-      };
-    },
+): { columnNames: string[]; rows: string[][] } {
+  const rows: string[][] = csvParseSync(input, {
+    to: numRecordLimit && numRecordLimit + 1, // +1 to account for the header.
   });
+  const columnNames = rows.length ? rows[0] : [];
+  return { columnNames, rows: rows.slice(1) };
+}
 
-  const header = transactions.length
-    ? Object.getOwnPropertyNames(transactions[0].rawValues)
-    : [];
+export function parseBankOutflow({
+  columnTypes,
+  row,
+}: {
+  columnTypes: BankColumnType[];
+  row: string[];
+}): BankTransaction {
+  const values = parseRowValues(columnTypes, row);
+  return {
+    values,
+    outflow: getTotalOutflow(values),
+  };
+}
 
-  return { header, transactions };
+function parseRowValues(
+  columnTypes: BankColumnType[],
+  row: string[],
+): BankValue[] {
+  return row.map((rawValue, index) => {
+    const type = columnTypes[index];
+    return type === "inflow" || type === "outflow"
+      ? {
+          type,
+          rawValue,
+          amount: currency(rawValue),
+        }
+      : { type, rawValue };
+  });
+}
+
+function getTotalOutflow(values: BankValue[]): currency {
+  return values.reduce((prev, value) => {
+    if (value.type === "outflow") return prev.add(value.amount);
+    else if (value.type === "inflow") return prev.subtract(value.amount);
+    else return prev;
+  }, currency(0));
 }
