@@ -1,4 +1,4 @@
-import { ClearedMark } from "./ClearedMark";
+import { StatusIcon } from "./StatusIcon";
 import { Amount } from "./currencyFormatting";
 import {
   BankColumnType,
@@ -102,7 +102,7 @@ function YNABRow({
         <Amount amount={transaction.transaction.outflow} />
       </td>
       <td className="align-top">
-        <ClearedMark status={transaction.transaction.cleared} />
+        <StatusIcon status={transaction.transaction.cleared} />
       </td>
       <td className="align-top">
         <input
