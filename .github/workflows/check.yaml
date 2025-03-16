@@ -1,15 +1,14 @@
-name: Typechecking, linting, and formatting
+name: Static checks and tests
 
 on:
-  push:
-    branches: ["main"]
-  workflow_dispatch:
+  - push
+  - workflow_dispatch
 
 permissions:
   contents: read
 
 jobs:
-  check:
+  main:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
