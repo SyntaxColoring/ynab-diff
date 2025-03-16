@@ -28,7 +28,7 @@ function Cleared(): React.JSX.Element {
   return (
     <svg
       className="inline align-baseline h-[1cap]"
-      role="img"
+      role="graphics-symbol"
       viewBox="-1 -1 2 2"
     >
       <title>Cleared</title>
@@ -48,7 +48,7 @@ function Uncleared(): React.JSX.Element {
   return (
     <svg
       className="inline align-baseline h-[1cap]"
-      role="img"
+      role="graphics-symbol"
       viewBox="-1 -1 2 2"
     >
       <title>Uncleared</title>
@@ -75,7 +75,7 @@ function Reconciled(): React.JSX.Element {
   return (
     <svg
       className="inline align-baseline h-[1cap]"
-      role="img"
+      role="graphics-symbol"
       viewBox="-0.8 -1 1.6 2"
     >
       <title>Reconciled</title>
