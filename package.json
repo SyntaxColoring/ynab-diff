@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "test": "vitest",
-    "check": "yarn run check-types && yarn run check-lint && yarn run check-format",
+    "check": "npm run check-types && npm run check-lint && npm run check-format",
     "check-types": "tsc --build",
     "check-lint": "eslint .",
     "check-format": "prettier --check .",
