@@ -15,7 +15,8 @@ import {
   BankTransaction,
   BankColumnType,
 } from "./importProcessing";
-import { BankTable, YNABTable } from "./Table";
+import { YNABTable } from "./tables/YNABTable";
+import { BankTable } from "./tables/BankTable";
 import { Select } from "./Select";
 import { findMismatches } from "./findMismatches";
 
