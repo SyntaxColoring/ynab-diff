@@ -28,6 +28,7 @@ import {
   MismatchFilterState,
   useMismatchFilterState,
 } from "./useMismatchFilterState";
+import { PageLayout } from "./PageLayout";
 
 type AnnotatedTransaction<T> = {
   transaction: T;
@@ -191,139 +192,161 @@ export default function App(): React.JSX.Element {
     [bankTransactionStrings, visibleBankTransactions],
   );
 
-  return (
-    <CurrencyFormatterContextProvider value={currencyFormatter}>
-      <div>
+  const headerArea = (
+    <div>
+      <label>
+        Currency format
+        <Select
+          options={CURRENCY_CODES}
+          value={currencyCode}
+          onChange={setCurrencyCode}
+        />
+      </label>
+    </div>
+  );
+
+  const ynabImportArea = (
+    <section>
+      <h2>Import from YNAB</h2>
+      <label>
+        Import CSV file
+        <input
+          type="file"
+          accept="text/csv,.csv"
+          onChange={async (event) => {
+            const file = event.target.files?.item(0);
+            if (file) {
+              try {
+                setYNABTransactions(
+                  parseYNABCSV(await file.text()).map((transaction, i) => ({
+                    transaction,
+                    key: i,
+                    isExcludedFromComparison:
+                      transaction.cleared === "reconciled",
+                  })),
+                );
+              } catch (e) {
+                // TODO: Better Error handling.
+                if (e instanceof ParseError) {
+                  setYNABTransactions(null);
+                } else throw e;
+              }
+            }
+          }}
+        />
+      </label>
+      <label>
+        Account
+        <Select
+          options={[
+            { label: "Select...", value: "" },
+            ...(availableYNABAccounts ?? []),
+          ]}
+          value={selectedYNABAccount ?? ""}
+          onChange={(value) =>
+            setSelectedYNABAccount(value === "" ? null : value)
+          }
+        />
+      </label>
+    </section>
+  );
+
+  const bankImportArea = (
+    <section>
+      <h2>Import from bank</h2>
+      <label>
+        Import CSV file
+        <input
+          type="file"
+          accept="text/csv,.csv"
+          onChange={async (event) => {
+            const file = event.target.files?.item(0);
+            if (file) {
+              try {
+                const parseResult = parseBankCSV(await file.text());
+                setBankTransactionStrings({
+                  columnNames: parseResult.columnNames,
+                  rows: parseResult.rows.map((row, index) => ({
+                    transaction: row,
+                    key: index,
+                    isExcludedFromComparison: false,
+                  })),
+                });
+              } catch (e) {
+                // TODO: Better error handling.
+                if (e instanceof ParseError) setBankTransactionStrings(null);
+                else throw e;
+              }
+            }
+          }}
+        />
+      </label>
+    </section>
+  );
+
+  const filterArea = (
+    <>
+      {filterState !== null && (
+        <section className="col-span-2">
+          <h2>
+            {mismatchCount} mismatched{" "}
+            {mismatchCount == 1 ? "transaction" : "transactions"}
+          </h2>
+          <MismatchFiltersList {...filterState} />
+        </section>
+      )}
+
+      <section className="col-span-2">
         <label>
-          Currency format
-          <Select
-            options={CURRENCY_CODES}
-            value={currencyCode}
-            onChange={setCurrencyCode}
+          Show excluded transactions
+          <input
+            type="checkbox"
+            checked={showingExcludedTransactions}
+            onChange={(e) => setShowingExcludedTransactions(e.target.checked)}
           />
         </label>
-      </div>
+      </section>
+    </>
+  );
 
-      <div className="grid grid-cols-2">
-        <section>
-          <h2>Import from YNAB</h2>
-          <label>
-            Import CSV file
-            <input
-              type="file"
-              accept="text/csv,.csv"
-              onChange={async (event) => {
-                const file = event.target.files?.item(0);
-                if (file) {
-                  try {
-                    setYNABTransactions(
-                      parseYNABCSV(await file.text()).map((transaction, i) => ({
-                        transaction,
-                        key: i,
-                        isExcludedFromComparison:
-                          transaction.cleared === "reconciled",
-                      })),
-                    );
-                  } catch (e) {
-                    // TODO: Better Error handling.
-                    if (e instanceof ParseError) {
-                      setYNABTransactions(null);
-                    } else throw e;
-                  }
-                }
-              }}
-            />
-          </label>
-          <label>
-            Account
-            <Select
-              options={[
-                { label: "Select...", value: "" },
-                ...(availableYNABAccounts ?? []),
-              ]}
-              value={selectedYNABAccount ?? ""}
-              onChange={(value) =>
-                setSelectedYNABAccount(value === "" ? null : value)
-              }
-            />
-          </label>
-        </section>
+  const ynabArea = (
+    <section>
+      <h2>{ynabTransactionsInAccount?.length || 0} YNAB transactions</h2>
+      {visibleYNABTransactions && (
+        <YNABTable
+          data={visibleYNABTransactions}
+          onExcludedChange={handleYNABExcludedChange}
+        />
+      )}
+    </section>
+  );
 
-        <section>
-          <h2>Import from bank</h2>
-          <label>
-            Import CSV file
-            <input
-              type="file"
-              accept="text/csv,.csv"
-              onChange={async (event) => {
-                const file = event.target.files?.item(0);
-                if (file) {
-                  try {
-                    const parseResult = parseBankCSV(await file.text());
-                    setBankTransactionStrings({
-                      columnNames: parseResult.columnNames,
-                      rows: parseResult.rows.map((row, index) => ({
-                        transaction: row,
-                        key: index,
-                        isExcludedFromComparison: false,
-                      })),
-                    });
-                  } catch (e) {
-                    // TODO: Better error handling.
-                    if (e instanceof ParseError)
-                      setBankTransactionStrings(null);
-                    else throw e;
-                  }
-                }
-              }}
-            />
-          </label>
-        </section>
+  const bankArea = (
+    <section>
+      <h2>{bankData?.transactions.length || 0} Bank transactions</h2>
+      {bankData && visibleBankTransactions && selectedBankColumnTypes && (
+        <BankTable
+          transactions={visibleBankTransactions}
+          columnSpecs={bankData.columnSpecs}
+          onChangeColumnTypes={setSelectedBankColumnTypes}
+          onExcludedChange={handleBankExcludedChange}
+        />
+      )}
+    </section>
+  );
 
-        {filterState !== null && (
-          <section className="col-span-2">
-            <h2>
-              {mismatchCount} mismatched{" "}
-              {mismatchCount == 1 ? "transaction" : "transactions"}
-            </h2>
-            <MismatchFiltersList {...filterState} />
-          </section>
-        )}
-
-        <section className="col-span-2">
-          <label>
-            Show excluded transactions
-            <input
-              type="checkbox"
-              checked={showingExcludedTransactions}
-              onChange={(e) => setShowingExcludedTransactions(e.target.checked)}
-            />
-          </label>
-        </section>
-
-        <section>
-          <h2>{ynabTransactionsInAccount?.length || 0} YNAB transactions</h2>
-          {visibleYNABTransactions && (
-            <YNABTable
-              data={visibleYNABTransactions}
-              onExcludedChange={handleYNABExcludedChange}
-            />
-          )}
-        </section>
-
-        <section>
-          <h2>{bankData?.transactions.length || 0} Bank transactions</h2>
-          {bankData && visibleBankTransactions && selectedBankColumnTypes && (
-            <BankTable
-              transactions={visibleBankTransactions}
-              columnSpecs={bankData.columnSpecs}
-              onChangeColumnTypes={setSelectedBankColumnTypes}
-              onExcludedChange={handleBankExcludedChange}
-            />
-          )}
-        </section>
-      </div>
+  return (
+    <CurrencyFormatterContextProvider value={currencyFormatter}>
+      <PageLayout
+        {...{
+          headerArea,
+          ynabImportArea,
+          bankImportArea,
+          filterArea,
+          ynabArea,
+          bankArea,
+        }}
+      />
     </CurrencyFormatterContextProvider>
   );
 }
