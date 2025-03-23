@@ -193,7 +193,8 @@ export default function App(): React.JSX.Element {
   );
 
   const headerArea = (
-    <div>
+    // TODO: Title, about, contact, and stuff currency dropdown into a settings dialog
+    <div className="text-right">
       <label>
         Currency format
         <Select

@@ -4,7 +4,7 @@ export interface PageLayoutProps {
   headerArea: React.JSX.Element;
   ynabImportArea: React.JSX.Element;
   bankImportArea: React.JSX.Element;
-  filterArea: React.JSX.Element | null;
+  filterArea: React.JSX.Element;
   ynabArea: React.JSX.Element;
   bankArea: React.JSX.Element;
 }
@@ -18,16 +18,23 @@ export function PageLayout({
   bankArea,
 }: PageLayoutProps) {
   return (
-    <div className="grid grid-cols-2">
+    <div
+      className="
+      h-dvh
+      grid
+      grid-cols-2
+      grid-rows-[min-content_min-content_min-content_1fr]
+    "
+    >
       <div className="col-span-2">{headerArea}</div>
 
       <div>{ynabImportArea}</div>
       <div>{bankImportArea}</div>
 
-      {filterArea && <div className="col-span-2">{filterArea}</div>}
+      <div className="col-span-2">{filterArea}</div>
 
-      <div>{ynabArea}</div>
-      <div>{bankArea}</div>
+      <div className="overflow-auto">{ynabArea}</div>
+      <div className="overflow-auto">{bankArea}</div>
     </div>
   );
 }
