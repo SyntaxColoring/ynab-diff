@@ -27,7 +27,7 @@ const C_PATH = `M ${C_X} ${C_Y} A ${C_RADIUS} ${C_RADIUS} 0 1 1 ${C_X} ${-C_Y}`;
 function Cleared(): React.JSX.Element {
   return (
     <svg
-      className="inline align-baseline h-[1cap]"
+      className="inline align-[calc((1cap-1lh)/4)] h-[calc((1cap+1lh)/2)]"
       role="graphics-symbol"
       viewBox="-1 -1 2 2"
     >
@@ -47,7 +47,7 @@ function Cleared(): React.JSX.Element {
 function Uncleared(): React.JSX.Element {
   return (
     <svg
-      className="inline align-baseline h-[1cap]"
+      className="inline align-[calc((1cap-1lh)/4)] h-[calc((1cap+1lh)/2)]"
       role="graphics-symbol"
       viewBox="-1 -1 2 2"
     >
@@ -74,7 +74,7 @@ function Uncleared(): React.JSX.Element {
 function Reconciled(): React.JSX.Element {
   return (
     <svg
-      className="inline align-baseline h-[1cap]"
+      className="inline align-[calc((1cap-1lh)/4)] h-[calc((1cap+1lh)/2)]"
       role="graphics-symbol"
       viewBox="-0.8 -1 1.6 2"
     >
