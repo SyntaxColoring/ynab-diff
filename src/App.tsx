@@ -223,7 +223,12 @@ export default function App(): React.JSX.Element {
                     transaction,
                     key: i,
                     isExcludedFromComparison:
-                      transaction.cleared === "reconciled",
+                      // Exclude uncleared transactions from the comparison by default
+                      // because they probably won't be in the bank's export (though this can depend on the bank).
+                      //
+                      // Also exclude reconciled transactions by default.
+                      // This is more arbitrary and I'm honestly not sure if it's right.
+                      transaction.cleared !== "cleared",
                   })),
                 );
               } catch (e) {
