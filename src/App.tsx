@@ -399,7 +399,7 @@ function MismatchToggleButton({
 }): React.JSX.Element {
   return (
     <button
-      className={enabled ? "text-blue-500 font-bold" : ""}
+      className={enabled ? "font-bold text-blue-500" : ""}
       onClick={() => onChange(!enabled)}
     >
       <Amount amount={amount} /> ({count})

@@ -18,14 +18,7 @@ export function PageLayout({
   bankArea,
 }: PageLayoutProps) {
   return (
-    <div
-      className="
-      h-dvh
-      grid
-      grid-cols-2
-      grid-rows-[min-content_min-content_min-content_1fr]
-    "
-    >
+    <div className="grid h-dvh grid-cols-2 grid-rows-[min-content_min-content_min-content_1fr]">
       <div className="col-span-2">{headerArea}</div>
 
       <div>{ynabImportArea}</div>

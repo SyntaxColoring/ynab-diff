@@ -85,7 +85,7 @@ function BankRow({
       {transaction.transaction.values.map((value, columnIndex) => {
         // TODO: Ideally we'd use bankColumnIsNumeric here, but TS has trouble with the type narrowing.
         return value.type === "inflow" || value.type === "outflow" ? (
-          <td key={columnIndex} className="align-top text-right tabular-nums">
+          <td key={columnIndex} className="text-right align-top tabular-nums">
             <Amount amount={value.amount} />
           </td>
         ) : (

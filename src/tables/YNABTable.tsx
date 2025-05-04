@@ -25,12 +25,12 @@ function YNABHead(): React.JSX.Element {
     <thead>
       <tr>
         <td className="align-top">Flag</td>
-        <td className="align-top text-right tabular-nums">Date</td>
+        <td className="text-right align-top tabular-nums">Date</td>
         <td className="align-top">Payee</td>
         <td className="align-top">Category group</td>
         <td className="align-top">Category</td>
         <td className="align-top">Memo</td>
-        <td className="align-top text-right tabular-nums">Outflow</td>
+        <td className="text-right align-top tabular-nums">Outflow</td>
         <td className="align-top">Cleared</td>
         <td className="align-top">Exclude</td>
       </tr>
@@ -64,14 +64,14 @@ function YNABRow({
   return (
     <tr className={transaction.isExcludedFromComparison ? "line-through" : ""}>
       <td className="align-top">{transaction.transaction.flag}</td>
-      <td className="align-top text-right tabular-nums">
+      <td className="text-right align-top tabular-nums">
         {transaction.transaction.date}
       </td>
       <td className="align-top">{transaction.transaction.payee}</td>
       <td className="align-top">{transaction.transaction.categoryGroup}</td>
       <td className="align-top">{transaction.transaction.category}</td>
       <td className="align-top">{transaction.transaction.memo}</td>
-      <td className="align-top text-right tabular-nums">
+      <td className="text-right align-top tabular-nums">
         <Amount amount={transaction.transaction.outflow} />
       </td>
       <td className="align-top">
