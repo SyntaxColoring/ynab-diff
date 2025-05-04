@@ -40,6 +40,41 @@ A3,B3,C3
       rows: [],
     });
   });
+
+  it("should tolerate trailing commas", () => {
+    // Based on an export from Chase Bank.
+    // The weirdness here is that because of the extra comma at the end of the data row,
+    // the data row is implied to have one more column than the header row.
+    const input = `\
+Details,Posting Date,Description,Amount,Type,Balance,Check or Slip #
+DEBIT,05/02/2025,"REDACTED            REDACTED    12345   WEB ID: 12345",-25.00,ACH_DEBIT,1234.56,,
+`;
+
+    const expectedOutput: ReturnType<typeof parseBankCSV> = {
+      columnNames: [
+        "Details",
+        "Posting Date",
+        "Description",
+        "Amount",
+        "Type",
+        "Balance",
+        "Check or Slip #",
+      ],
+      rows: [
+        [
+          "DEBIT",
+          "05/02/2025",
+          "REDACTED            REDACTED    12345   WEB ID: 12345",
+          "-25.00",
+          "ACH_DEBIT",
+          "1234.56",
+          "",
+        ],
+      ],
+    };
+
+    expect(parseBankCSV(input)).toStrictEqual(expectedOutput);
+  });
 });
 
 describe("parseBankOutflows()", () => {

@@ -9,9 +9,13 @@ export function parseBankCSV(
 ): { columnNames: string[]; rows: string[][] } {
   const rows: string[][] = csvParseSync(input, {
     to: numRecordLimit && numRecordLimit + 1, // +1 to account for the header.
+    relax_column_count_more: true,
   });
   const columnNames = rows.length ? rows[0] : [];
-  return { columnNames, rows: rows.slice(1) };
+  // Chop off any columns that weren't in the header.
+  // Some exports appear to have a trailing comma on data rows, which looks like an extra empty column.
+  const dataRows = rows.slice(1).map((row) => row.slice(0, columnNames.length));
+  return { columnNames, rows: dataRows };
 }
 
 export function parseBankOutflow({
