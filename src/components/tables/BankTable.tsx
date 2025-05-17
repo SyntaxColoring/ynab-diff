@@ -1,5 +1,5 @@
-import { Amount } from "../currencyFormatting";
-import { BankColumnType, BankTransaction } from "../importProcessing";
+import { Amount } from "../../currencyFormatting";
+import { BankColumnType, BankTransaction } from "../../importProcessing";
 
 export interface BankProps {
   transactions: {
@@ -11,8 +11,10 @@ export interface BankProps {
     name: string;
     type: BankColumnType;
   }[];
-  onChangeColumnTypes: (newColumnTypes: BankColumnType[]) => void;
-  onExcludedChange: (index: number, excluded: boolean) => void;
+  onChangeColumnTypes?: (newColumnTypes: BankColumnType[]) => void;
+  onExcludedChange?: (index: number, excluded: boolean) => void;
+  hideExclusionColumn?: boolean;
+  hideColumnTypeControls?: boolean;
 }
 
 export function BankTable(props: BankProps): React.JSX.Element {
@@ -38,20 +40,22 @@ function BankHead(props: BankProps): React.JSX.Element {
               }
             >
               {name}
-              <BankColumnTypeSelect
-                value={type}
-                onChange={(newType) => {
-                  const newTypes = [
-                    ...props.columnSpecs.map(({ type }) => type),
-                  ];
-                  newTypes[index] = newType;
-                  props.onChangeColumnTypes(newTypes);
-                }}
-              />
+              {props.hideColumnTypeControls || (
+                <BankColumnTypeSelect
+                  value={type}
+                  onChange={(newType) => {
+                    const newTypes = [
+                      ...props.columnSpecs.map(({ type }) => type),
+                    ];
+                    newTypes[index] = newType;
+                    props.onChangeColumnTypes?.(newTypes);
+                  }}
+                />
+              )}
             </td>
           );
         })}
-        <td className="align-top">Exclude</td>
+        {props.hideExclusionColumn || <td className="align-top">Exclude</td>}
       </tr>
     </thead>
   );
@@ -65,8 +69,9 @@ function BankBody(props: BankProps): React.JSX.Element {
           key={transaction.key}
           transaction={transaction}
           onExcludedChange={(excluded) =>
-            props.onExcludedChange(index, excluded)
+            props.onExcludedChange?.(index, excluded)
           }
+          hideExclusionColumn={props.hideExclusionColumn ?? false}
         />
       ))}
     </tbody>
@@ -76,9 +81,11 @@ function BankBody(props: BankProps): React.JSX.Element {
 function BankRow({
   transaction,
   onExcludedChange,
+  hideExclusionColumn,
 }: {
   transaction: BankProps["transactions"][number];
   onExcludedChange: (excluded: boolean) => void;
+  hideExclusionColumn: boolean;
 }): React.JSX.Element {
   return (
     <tr className={transaction.isExcludedFromComparison ? "line-through" : ""}>
@@ -94,13 +101,16 @@ function BankRow({
           </td>
         );
       })}
-      <td className="align-top">
-        <input
-          type="checkbox"
-          checked={transaction.isExcludedFromComparison}
-          onChange={(e) => onExcludedChange(e.target.checked)}
-        />
-      </td>
+
+      {hideExclusionColumn || (
+        <td className="align-top">
+          <input
+            type="checkbox"
+            checked={transaction.isExcludedFromComparison}
+            onChange={(e) => onExcludedChange(e.target.checked)}
+          />
+        </td>
+      )}
     </tr>
   );
 }

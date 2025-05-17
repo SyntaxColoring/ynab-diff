@@ -29,3 +29,6 @@ Import from API
 
 Include a buffer of some transactions that you've already reconciled.
 It's easier to ignore extra YNAB transactions than to ignore extra bank transactions?
+
+Think about what the UX will look like for selecting column types.
+Dropdowns in each column header?

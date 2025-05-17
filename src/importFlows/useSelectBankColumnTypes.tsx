@@ -1,6 +1,6 @@
 import { isEqual } from "lodash";
 import React from "react";
-import { BankColumnType } from "./importProcessing";
+import { BankColumnType } from "../importProcessing";
 
 /**
  * Logic for the dropdowns for selecting the column types in the bank table.

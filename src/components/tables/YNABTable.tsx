@@ -1,6 +1,6 @@
 import { StatusIcon } from "../StatusIcon";
-import { Amount } from "../currencyFormatting";
-import { YNABTransaction } from "../importProcessing";
+import { Amount } from "../../currencyFormatting";
+import { YNABTransaction } from "../../importProcessing";
 
 export interface YNABProps {
   data: {
