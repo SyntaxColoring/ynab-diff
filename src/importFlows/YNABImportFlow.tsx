@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { parseYNABCSV, YNABTransaction } from "../importProcessing";
 import { useAsync } from "react-async-hook";
-import CSVFileInput from "./CSVFileInput";
+
 import { Button } from "../components/Button";
 import { Select } from "../components/Select";
+import { parseYNABCSV, YNABTransaction } from "../importProcessing";
+import CSVFileInput from "./CSVFileInput";
 import { useSelectYNABAccount } from "./useSelectYNABAccount";
 
 export interface YNABImportFlowProps {

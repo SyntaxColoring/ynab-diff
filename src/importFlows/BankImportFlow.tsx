@@ -1,16 +1,17 @@
 import React, { useCallback, useMemo, useState } from "react";
+import { useAsync } from "react-async-hook";
+
 import { Button } from "../components/Button";
+import { BankTable } from "../components/tables/BankTable";
 import {
   BankColumnType,
   BankTransaction,
   parseBankCSV,
   parseBankOutflow,
 } from "../importProcessing";
-import CSVFileInput from "./CSVFileInput";
-import { useAsync } from "react-async-hook";
-import { useSelectBankColumnTypes } from "./useSelectBankColumnTypes";
-import { BankTable } from "../components/tables/BankTable";
 import { zipEqualLength } from "../zipEqualLength";
+import CSVFileInput from "./CSVFileInput";
+import { useSelectBankColumnTypes } from "./useSelectBankColumnTypes";
 
 const PREVIEW_TRANSACTION_COUNT = 5;
 

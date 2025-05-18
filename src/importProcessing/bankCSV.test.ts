@@ -1,6 +1,5 @@
-import { describe, expect, it } from "vitest";
-
 import currency from "currency.js";
+import { describe, expect, it } from "vitest";
 
 import { parseBankCSV, parseBankOutflow } from "./bankCSV";
 import { BankTransaction } from "./types";

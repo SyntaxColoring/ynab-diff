@@ -1,5 +1,6 @@
 import currency from "currency.js";
 import { describe, expect, it } from "vitest";
+
 import { findMismatches } from "./findMismatches";
 
 function areCurrenciesEqual(a: unknown, b: unknown): boolean | undefined {

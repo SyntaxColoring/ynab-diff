@@ -1,5 +1,6 @@
 import { isEqual } from "lodash";
 import React from "react";
+
 import { BankColumnType } from "../importProcessing";
 
 /**

@@ -1,7 +1,7 @@
+import currency from "currency.js";
 import { describe, expect, it } from "vitest";
 
 import { YNABTransaction } from "./types";
-import currency from "currency.js";
 import { parseYNABCSV } from "./ynabCSV";
 
 describe("parseYNABCSV()", () => {

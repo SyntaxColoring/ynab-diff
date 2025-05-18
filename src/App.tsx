@@ -1,4 +1,10 @@
+import currency from "currency.js";
 import React, { useCallback } from "react";
+
+import { Button } from "./components/Button";
+import { Select } from "./components/Select";
+import { BankTable } from "./components/tables/BankTable";
+import { YNABTable } from "./components/tables/YNABTable";
 import {
   Amount,
   CURRENCY_CODES,
@@ -6,25 +12,19 @@ import {
   CurrencyFormatterContextProvider,
   getCurrencyFormatter,
 } from "./currencyFormatting";
-import {
-  YNABTransaction,
-  BankTransaction,
-  BankColumnType,
-} from "./importProcessing";
-import { YNABTable } from "./components/tables/YNABTable";
-import { BankTable } from "./components/tables/BankTable";
-import { Select } from "./components/Select";
 import { findMismatches } from "./findMismatches";
-
-import currency from "currency.js";
+import { BankImportFlow } from "./importFlows/BankImportFlow";
+import { YNABImportFlow } from "./importFlows/YNABImportFlow";
+import {
+  BankColumnType,
+  BankTransaction,
+  YNABTransaction,
+} from "./importProcessing";
+import { PageLayout } from "./PageLayout";
 import {
   MismatchFilterState,
   useMismatchFilterState,
 } from "./useMismatchFilterState";
-import { PageLayout } from "./PageLayout";
-import { YNABImportFlow } from "./importFlows/YNABImportFlow";
-import { BankImportFlow } from "./importFlows/BankImportFlow";
-import { Button } from "./components/Button";
 
 type AnnotatedTransaction<T> = {
   transaction: T;
