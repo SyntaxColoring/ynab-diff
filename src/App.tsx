@@ -2,6 +2,7 @@ import currency from "currency.js";
 import React, { Key, useCallback } from "react";
 
 import { Button } from "./components/Button";
+import { FilterPill } from "./components/FilterPill";
 import { Select } from "./components/Select";
 import { BankTable } from "./components/tables/BankTable";
 import { YNABTable } from "./components/tables/YNABTable";
@@ -168,25 +169,28 @@ export default function App(): React.JSX.Element {
   const filterArea = (
     <>
       {filterState !== null && (
-        <section className="col-span-2">
+        <section className="col-span-2 space-y-2">
           <h2>
-            {mismatchCount} mismatched{" "}
-            {mismatchCount == 1 ? "transaction" : "transactions"}
+            {mismatchCount === 1
+              ? "There is 1 transaction that is on one side but not the other."
+              : `There are ${mismatchCount} transactions that are on one side but not the other.`}{" "}
+            Use these filters to find them:
           </h2>
           <MismatchFiltersList {...filterState} />
+          <div>
+            <label>
+              Show transactions not being compared
+              <input
+                type="checkbox"
+                checked={showingExcludedTransactions}
+                onChange={(e) =>
+                  setShowingExcludedTransactions(e.target.checked)
+                }
+              />
+            </label>
+          </div>
         </section>
       )}
-
-      <section className="col-span-2">
-        <label>
-          Show excluded transactions
-          <input
-            type="checkbox"
-            checked={showingExcludedTransactions}
-            onChange={(e) => setShowingExcludedTransactions(e.target.checked)}
-          />
-        </label>
-      </section>
     </>
   );
 
@@ -320,38 +324,19 @@ export default function App(): React.JSX.Element {
 
 function MismatchFiltersList(props: MismatchFilterState): React.JSX.Element {
   return (
-    <ul>
+    <ul className="flex flex-wrap gap-2">
       {props.availableFilters.map((m) => (
         <li key={m.key} className="inline-block">
-          <MismatchToggleButton
-            amount={m.mismatch.amount}
-            count={Math.abs(m.mismatch.bankCount - m.mismatch.ynabCount)}
-            enabled={m.filterEnabled}
-            onChange={(enabled) => props.setFilterEnabled(m.key, enabled)}
+          <FilterPill
+            currencyAmount={m.mismatch.amount}
+            mismatchCount={Math.abs(
+              m.mismatch.bankCount - m.mismatch.ynabCount,
+            )}
+            selected={m.filterEnabled}
+            onClick={() => props.setFilterEnabled(m.key, !m.filterEnabled)}
           />
         </li>
       ))}
     </ul>
-  );
-}
-
-function MismatchToggleButton({
-  amount,
-  count,
-  enabled,
-  onChange,
-}: {
-  amount: currency;
-  count: number;
-  enabled: boolean;
-  onChange: (enabled: boolean) => void;
-}): React.JSX.Element {
-  return (
-    <button
-      className={enabled ? "font-bold text-blue-500" : ""}
-      onClick={() => onChange(!enabled)}
-    >
-      <Amount amount={amount} /> ({count})
-    </button>
   );
 }
