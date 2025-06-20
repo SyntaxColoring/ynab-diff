@@ -1,5 +1,5 @@
 import currency from "currency.js";
-import React, { useCallback } from "react";
+import React, { Key, useCallback } from "react";
 
 import { Button } from "./components/Button";
 import { Select } from "./components/Select";
@@ -113,11 +113,8 @@ export default function App(): React.JSX.Element {
     });
 
   const handleYNABExcludedChange = useCallback(
-    (indexInVisible: number, excluded: boolean) => {
+    (key: Key, excluded: boolean) => {
       if (ynabImport.status !== "noImportYet" && visibleYNABTransactions) {
-        // These non-null assertions should be OK because it's impossible for
-        // this handler to be called unless there are transactions to click.
-        const key = visibleYNABTransactions[indexInVisible].key;
         // TODO: Make this not O(n).
         const indexToChange = ynabImport.transactions.findIndex(
           (t) => t.key === key,
@@ -134,9 +131,8 @@ export default function App(): React.JSX.Element {
   );
 
   const handleBankExcludedChange = useCallback(
-    (indexInVisible: number, excluded: boolean) => {
+    (key: Key, excluded: boolean) => {
       if (bankImport.status !== "noImportYet" && visibleBankTransactions) {
-        const key = visibleBankTransactions[indexInVisible].key;
         // TODO: Make this not O(n).
         const indexToChange = bankImport.transactions.findIndex(
           (t) => t.key === key,
@@ -195,27 +191,32 @@ export default function App(): React.JSX.Element {
   );
 
   const ynabArea = (
-    <section>
+    <section className="h-full">
       {ynabImport.status === "imported" ? (
-        <>
-          <h2>
-            {ynabImport.transactions.length} YNAB transactions{" "}
-            <Button
-              variant="secondary"
-              onClick={() =>
-                setYNABImport({ ...ynabImport, status: "reimporting" })
-              }
-            >
-              Edit
-            </Button>
-          </h2>
-          {visibleYNABTransactions && (
-            <YNABTable
-              data={visibleYNABTransactions}
-              onExcludedChange={handleYNABExcludedChange}
-            />
-          )}
-        </>
+        <div className="h-full flex flex-col gap-1">
+          <div className="flex-0">
+            <h2>
+              {ynabImport.transactions.length} YNAB transactions{" "}
+              <Button
+                variant="secondary"
+                onClick={() =>
+                  setYNABImport({ ...ynabImport, status: "reimporting" })
+                }
+              >
+                Edit
+              </Button>
+            </h2>
+          </div>
+          <div className="flex-1">
+            {visibleYNABTransactions && (
+              <YNABTable
+                data={visibleYNABTransactions}
+                onExcludedChange={handleYNABExcludedChange}
+                heightMode="fillContainer"
+              />
+            )}
+          </div>
+        </div>
       ) : (
         <YNABImportFlow
           onCancel={() => {
@@ -249,29 +250,34 @@ export default function App(): React.JSX.Element {
   );
 
   const bankArea = (
-    <section>
+    <section className="h-full">
       {bankImport.status === "imported" ? (
-        <>
-          <h2>
-            {bankImport.transactions.length} Bank transactions{" "}
-            <Button
-              variant="secondary"
-              onClick={() =>
-                setBankImport({ ...bankImport, status: "reimporting" })
-              }
-            >
-              Edit
-            </Button>
-          </h2>
-          {visibleBankTransactions && (
-            <BankTable
-              transactions={visibleBankTransactions}
-              onExcludedChange={handleBankExcludedChange}
-              columnSpecs={bankImport.columnSpecs}
-              hideColumnTypeControls
-            />
-          )}
-        </>
+        <div className="h-full flex flex-col gap-1">
+          <div className="flex-0">
+            <h2>
+              {bankImport.transactions.length} Bank transactions{" "}
+              <Button
+                variant="secondary"
+                onClick={() =>
+                  setBankImport({ ...bankImport, status: "reimporting" })
+                }
+              >
+                Edit
+              </Button>
+            </h2>
+          </div>
+          <div className="flex-1">
+            {visibleBankTransactions && (
+              <BankTable
+                transactions={visibleBankTransactions}
+                onExcludedChange={handleBankExcludedChange}
+                columnSpecs={bankImport.columnSpecs}
+                hideColumnTypeControls
+                heightMode="fillContainer"
+              />
+            )}
+          </div>
+        </div>
       ) : (
         <BankImportFlow
           onCancel={() => {

@@ -99,7 +99,7 @@ export function BankImportFlow(props: Props): React.JSX.Element {
         : { disabled: false };
 
   return (
-    <form className="flex flex-col space-y-8">
+    <form className="h-full flex flex-col space-y-8">
       <h1>Import CSV from Bank</h1>
 
       <CSVFileInput onChange={setFile} />
@@ -111,6 +111,7 @@ export function BankImportFlow(props: Props): React.JSX.Element {
             transactions={tableData.previewedTransactions}
             onChangeColumnTypes={setSelectedBankColumnTypes}
             hideExclusionColumn
+            heightMode="fitContent"
           />
           <PreviewCountText
             previewTransactionCount={tableData.previewedTransactions.length}

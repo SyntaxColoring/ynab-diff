@@ -1,11 +1,13 @@
 export interface Props {
-  onChange: (value: string) => void;
+  className?: string;
+  onChange?: (value: string) => void;
   options: readonly (string | { value: string; label: string })[];
   required?: boolean;
-  value: string;
+  value?: string;
 }
 
 export function Select({
+  className,
   onChange,
   options,
   required,
@@ -13,9 +15,10 @@ export function Select({
 }: Props): React.JSX.Element {
   return (
     <select
+      className={className}
       required={required}
       value={value}
-      onChange={(event) => onChange(event.target.value)}
+      onChange={(event) => onChange?.(event.target.value)}
     >
       {options.map((option) => {
         const value = typeof option === "string" ? option : option.value;

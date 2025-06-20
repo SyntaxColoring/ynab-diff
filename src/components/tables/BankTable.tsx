@@ -1,7 +1,19 @@
-import { Amount } from "../../currencyFormatting";
-import { BankColumnType, BankTransaction } from "../../importProcessing";
+import { CellEditRequestEvent, ColDef, GetRowIdFunc } from "ag-grid-community";
+import { AgGridReact } from "ag-grid-react";
+import React, { useCallback, useMemo } from "react";
 
-export interface BankProps {
+import {
+  BankColumnType,
+  BankTransaction,
+  BankValue,
+} from "../../importProcessing";
+import { BankValueCellRenderer } from "./AmountCellRenderer";
+import {
+  CustomHeader,
+  AdditionalProps as CustomHeaderProps,
+} from "./CustomHeader";
+
+export interface Props {
   transactions: {
     transaction: BankTransaction;
     key: React.Key;
@@ -12,131 +24,124 @@ export interface BankProps {
     type: BankColumnType;
   }[];
   onChangeColumnTypes?: (newColumnTypes: BankColumnType[]) => void;
-  onExcludedChange?: (index: number, excluded: boolean) => void;
+  onExcludedChange?: (key: React.Key, excluded: boolean) => void;
   hideExclusionColumn?: boolean;
   hideColumnTypeControls?: boolean;
+  heightMode: "fitContent" | "fillContainer";
 }
 
-export function BankTable(props: BankProps): React.JSX.Element {
+type TData = Props["transactions"][number];
+
+export function BankTable(props: Props): React.JSX.Element {
+  const {
+    transactions,
+    columnSpecs,
+    heightMode,
+    hideColumnTypeControls,
+    hideExclusionColumn,
+    onChangeColumnTypes,
+    onExcludedChange,
+  } = props;
+
+  const colDefs = useMemo(() => {
+    const exclusionColDef: ColDef<TData, boolean> = {
+      field: "isExcludedFromComparison",
+      headerName: "Exclude",
+      editable: true,
+      hide: hideExclusionColumn,
+      headerComponent: CustomHeader,
+      headerComponentParams: {} satisfies CustomHeaderProps,
+    };
+
+    const dataColDefs = columnSpecs.map(
+      (columnSpec, index): ColDef<TData, BankValue> => ({
+        colId: index.toString(),
+        headerName: columnSpec.name,
+        type: bankColumnIsAmount(columnSpec.type) ? "numericColumn" : undefined,
+        headerComponent: CustomHeader,
+        headerComponentParams: {
+          menuOptions: hideColumnTypeControls
+            ? undefined
+            : [
+                {
+                  label: "Text",
+                  value: "other" satisfies BankColumnType,
+                },
+                {
+                  label: "Inflow",
+                  value: "inflow" satisfies BankColumnType,
+                },
+                {
+                  label: "Outflow",
+                  value: "outflow" satisfies BankColumnType,
+                },
+              ],
+          selectedMenuOption: columnSpec.type,
+          onSelectMenuOption: (newType) => {
+            const newTypes = columnSpecs.map((c) => c.type);
+            newTypes[index] = newType as BankColumnType;
+            onChangeColumnTypes?.(newTypes);
+          },
+          rightAlign: bankColumnIsAmount(columnSpec.type),
+        } satisfies CustomHeaderProps,
+        valueGetter: (params) => params.data?.transaction?.values[index],
+        comparator,
+        cellRenderer: BankValueCellRenderer,
+      }),
+    );
+
+    return [exclusionColDef, ...dataColDefs];
+  }, [
+    columnSpecs,
+    hideColumnTypeControls,
+    hideExclusionColumn,
+    onChangeColumnTypes,
+  ]);
+
+  const handleCellEditRequest = useCallback(
+    (params: CellEditRequestEvent<TData, boolean>) => {
+      const { data, newValue } = params;
+      if (newValue != null) {
+        onExcludedChange?.(data.key, newValue);
+      }
+    },
+    [onExcludedChange],
+  );
+
   return (
-    <table>
-      <BankHead {...props} />
-      <BankBody {...props} />
-    </table>
+    <AgGridReact
+      getRowId={getRowId}
+      rowData={transactions}
+      columnDefs={colDefs}
+      readOnlyEdit
+      onCellEditRequest={handleCellEditRequest}
+      domLayout={heightMode === "fitContent" ? "autoHeight" : "normal"}
+    />
   );
 }
 
-function BankHead(props: BankProps): React.JSX.Element {
-  return (
-    <thead>
-      <tr>
-        {props.columnSpecs.map(({ name, type }, index) => {
-          return (
-            <td
-              key={index}
-              className={
-                "align-top " +
-                (bankColumnIsNumeric(type) ? "text-right tabular-nums" : "")
-              }
-            >
-              {name}
-              {props.hideColumnTypeControls || (
-                <BankColumnTypeSelect
-                  value={type}
-                  onChange={(newType) => {
-                    const newTypes = [
-                      ...props.columnSpecs.map(({ type }) => type),
-                    ];
-                    newTypes[index] = newType;
-                    props.onChangeColumnTypes?.(newTypes);
-                  }}
-                />
-              )}
-            </td>
-          );
-        })}
-        {props.hideExclusionColumn || <td className="align-top">Exclude</td>}
-      </tr>
-    </thead>
-  );
-}
-
-function BankBody(props: BankProps): React.JSX.Element {
-  return (
-    <tbody>
-      {props.transactions.map((transaction, index) => (
-        <BankRow
-          key={transaction.key}
-          transaction={transaction}
-          onExcludedChange={(excluded) =>
-            props.onExcludedChange?.(index, excluded)
-          }
-          hideExclusionColumn={props.hideExclusionColumn ?? false}
-        />
-      ))}
-    </tbody>
-  );
-}
-
-function BankRow({
-  transaction,
-  onExcludedChange,
-  hideExclusionColumn,
-}: {
-  transaction: BankProps["transactions"][number];
-  onExcludedChange: (excluded: boolean) => void;
-  hideExclusionColumn: boolean;
-}): React.JSX.Element {
-  return (
-    <tr className={transaction.isExcludedFromComparison ? "line-through" : ""}>
-      {transaction.transaction.values.map((value, columnIndex) => {
-        // TODO: Ideally we'd use bankColumnIsNumeric here, but TS has trouble with the type narrowing.
-        return value.type === "inflow" || value.type === "outflow" ? (
-          <td key={columnIndex} className="text-right align-top tabular-nums">
-            <Amount amount={value.amount} />
-          </td>
-        ) : (
-          <td key={columnIndex} className="align-top">
-            {value.rawValue}
-          </td>
-        );
-      })}
-
-      {hideExclusionColumn || (
-        <td className="align-top">
-          <input
-            type="checkbox"
-            checked={transaction.isExcludedFromComparison}
-            onChange={(e) => onExcludedChange(e.target.checked)}
-          />
-        </td>
-      )}
-    </tr>
-  );
-}
-
-// TODO: Use our own Select component for this, probably
-function BankColumnTypeSelect({
-  value,
-  onChange,
-}: {
-  value: BankColumnType;
-  onChange: (value: BankColumnType) => void;
-}): React.JSX.Element {
-  return (
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value as BankColumnType)}
-    >
-      <option value={"other" satisfies BankColumnType}>Other</option>
-      <option value={"inflow" satisfies BankColumnType}>Inflow</option>
-      <option value={"outflow" satisfies BankColumnType}>Outflow</option>
-    </select>
-  );
-}
-
-function bankColumnIsNumeric(
+function bankColumnIsAmount(
   columnType: BankColumnType,
 ): columnType is "inflow" | "outflow" {
   return columnType === "inflow" || columnType === "outflow";
+}
+
+const getRowId: GetRowIdFunc<TData> = (params) => {
+  return String(params.data.key);
+};
+
+function comparator(
+  a: BankValue | null | undefined,
+  b: BankValue | null | undefined,
+): number {
+  if (a == null || b == null) {
+    return 0;
+  } else if (
+    (a.type === "inflow" || a.type === "outflow") &&
+    (b.type === "inflow" || b.type === "outflow")
+  ) {
+    return a.amount.intValue - b.amount.intValue;
+  } else {
+    return a.rawValue.localeCompare(b.rawValue);
+  }
 }

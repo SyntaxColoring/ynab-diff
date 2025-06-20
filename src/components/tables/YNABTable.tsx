@@ -1,6 +1,14 @@
-import { Amount } from "../../currencyFormatting";
+import { CellEditRequestEvent, ColDef, GetRowIdFunc } from "ag-grid-community";
+import { AgGridReact } from "ag-grid-react";
+import React, { useMemo } from "react";
+
 import { YNABTransaction } from "../../importProcessing";
-import { StatusIcon } from "../StatusIcon";
+import { AmountCellRenderer } from "./AmountCellRenderer";
+import {
+  CustomHeader,
+  AdditionalProps as CustomHeaderProps,
+} from "./CustomHeader";
+import { StatusIconCellRenderer } from "./StatusIconCellRenderer";
 
 export interface YNABProps {
   data: {
@@ -8,82 +16,97 @@ export interface YNABProps {
     isExcludedFromComparison: boolean;
     key: React.Key;
   }[];
-  onExcludedChange: (index: number, excluded: boolean) => void;
+  onExcludedChange: (key: React.Key, excluded: boolean) => void;
+  hideExclusionColumn?: boolean;
+  heightMode: "fitContent" | "fillContainer";
 }
+
+type TData = YNABProps["data"][number];
+
+const defaultColDef: ColDef<TData, unknown> = {
+  headerComponent: CustomHeader,
+};
+
+const dataColDefs: ColDef<TData, unknown>[] = [
+  {
+    field: "transaction.flag",
+    headerName: "Flag",
+  },
+  {
+    field: "transaction.date",
+    headerName: "Date",
+  },
+  {
+    field: "transaction.payee",
+    headerName: "Payee",
+  },
+  {
+    field: "transaction.categoryGroup",
+    headerName: "Category group",
+  },
+  {
+    field: "transaction.category",
+    headerName: "Category",
+  },
+  {
+    field: "transaction.memo",
+    headerName: "Memo",
+  },
+  {
+    field: "transaction.outflow",
+    headerName: "Outflow",
+    type: "numericColumn",
+    headerComponentParams: {
+      rightAlign: true,
+    } satisfies CustomHeaderProps,
+    cellRenderer: AmountCellRenderer,
+  },
+  {
+    field: "transaction.cleared",
+    headerName: "Cleared",
+    cellRenderer: StatusIconCellRenderer,
+  },
+];
 
 export function YNABTable(props: YNABProps): React.JSX.Element {
+  const { data, heightMode, onExcludedChange, hideExclusionColumn } = props;
+
+  const colDefs: ColDef<TData, unknown>[] = useMemo(
+    () => [
+      {
+        field: "isExcludedFromComparison",
+        headerName: "Exclude",
+        editable: true,
+        hide: hideExclusionColumn,
+      },
+      ...dataColDefs,
+    ],
+    [hideExclusionColumn],
+  );
+
+  const handleCellEditRequest = React.useCallback(
+    (params: CellEditRequestEvent<TData, boolean>) => {
+      const { data, newValue } = params;
+      if (newValue != null) {
+        onExcludedChange?.(data.key, newValue);
+      }
+    },
+    [onExcludedChange],
+  );
+
   return (
-    <table>
-      <YNABHead />
-      <YNABBody {...props} />
-    </table>
+    <AgGridReact
+      getRowId={getRowId}
+      rowData={data}
+      defaultColDef={defaultColDef}
+      columnDefs={colDefs}
+      readOnlyEdit
+      onCellEditRequest={handleCellEditRequest}
+      domLayout={heightMode === "fitContent" ? "autoHeight" : "normal"}
+    />
   );
 }
 
-function YNABHead(): React.JSX.Element {
-  return (
-    <thead>
-      <tr>
-        <td className="align-top">Flag</td>
-        <td className="text-right align-top tabular-nums">Date</td>
-        <td className="align-top">Payee</td>
-        <td className="align-top">Category group</td>
-        <td className="align-top">Category</td>
-        <td className="align-top">Memo</td>
-        <td className="text-right align-top tabular-nums">Outflow</td>
-        <td className="align-top">Cleared</td>
-        <td className="align-top">Exclude</td>
-      </tr>
-    </thead>
-  );
-}
-
-function YNABBody(props: YNABProps): React.JSX.Element {
-  return (
-    <tbody>
-      {props.data.map((transaction, index) => (
-        <YNABRow
-          key={transaction.key}
-          transaction={transaction}
-          onExcludedChange={(excluded) =>
-            props.onExcludedChange(index, excluded)
-          }
-        />
-      ))}
-    </tbody>
-  );
-}
-
-function YNABRow({
-  transaction,
-  onExcludedChange,
-}: {
-  transaction: YNABProps["data"][number];
-  onExcludedChange: (excluded: boolean) => void;
-}): React.JSX.Element {
-  return (
-    <tr className={transaction.isExcludedFromComparison ? "line-through" : ""}>
-      <td className="align-top">{transaction.transaction.flag}</td>
-      <td className="text-right align-top tabular-nums">
-        {transaction.transaction.date}
-      </td>
-      <td className="align-top">{transaction.transaction.payee}</td>
-      <td className="align-top">{transaction.transaction.categoryGroup}</td>
-      <td className="align-top">{transaction.transaction.category}</td>
-      <td className="align-top">{transaction.transaction.memo}</td>
-      <td className="text-right align-top tabular-nums">
-        <Amount amount={transaction.transaction.outflow} />
-      </td>
-      <td className="align-top">
-        <StatusIcon status={transaction.transaction.cleared} />
-      </td>
-      <td className="align-top">
-        <input
-          type="checkbox"
-          checked={transaction.isExcludedFromComparison}
-          onChange={(e) => onExcludedChange(e.target.checked)}
-        />
-      </td>
-    </tr>
-  );
-}
+const getRowId: GetRowIdFunc<TData> = (params) => {
+  return String(params.data.key);
+};
