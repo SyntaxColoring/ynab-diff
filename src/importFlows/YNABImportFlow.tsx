@@ -9,12 +9,12 @@ import { useSelectYNABAccount } from "./useSelectYNABAccount";
 
 export interface YNABImportFlowProps {
   showCancelButton: boolean;
-  onSubmit(
+  onSubmit: (
     transactions: YNABTransaction[],
     account: string,
     filename: string,
-  ): void;
-  onCancel(): void;
+  ) => void;
+  onCancel: () => void;
 }
 
 export function YNABImportFlow({
@@ -107,5 +107,6 @@ async function parse(file: File | null): Promise<{
 
 function getMentionedYNABAccounts(transactions: YNABTransaction[]): string[] {
   const uniqueAccounts = new Set(transactions.map((t) => t.account));
-  return [...uniqueAccounts].sort(Intl.Collator().compare);
+  const collator = Intl.Collator();
+  return [...uniqueAccounts].sort(collator.compare.bind(collator));
 }

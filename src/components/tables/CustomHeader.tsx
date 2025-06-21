@@ -8,7 +8,7 @@ export interface AdditionalProps {
   rightAlign?: boolean;
   menuOptions?: SelectProps["options"];
   selectedMenuOption?: SelectProps["value"];
-  onSelectMenuOption?(newSelectedMenuOption: string): void;
+  onSelectMenuOption?: (newSelectedMenuOption: string) => void;
 }
 
 export type Props = CustomHeaderProps & AdditionalProps;
@@ -70,7 +70,7 @@ export function CustomHeader(props: Props): JSX.Element {
 
 function NameAndSortIcon(props: {
   displayName: string;
-  onClick?(): void;
+  onClick?: () => void;
   rightAlign?: boolean;
   sortDirection: SortDirection;
 }): JSX.Element {

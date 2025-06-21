@@ -26,8 +26,8 @@ export interface Result {
 
 export interface Props {
   showCancelButton: boolean;
-  onSubmit(result: Result): void;
-  onCancel(): void;
+  onSubmit: (result: Result) => void;
+  onCancel: () => void;
 }
 
 export function BankImportFlow(props: Props): React.JSX.Element {

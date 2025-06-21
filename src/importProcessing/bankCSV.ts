@@ -7,6 +7,7 @@ export function parseBankCSV(
   input: string,
   numRecordLimit?: number,
 ): { columnNames: string[]; rows: string[][] } {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const rows: string[][] = csvParseSync(input, {
     to: numRecordLimit && numRecordLimit + 1, // +1 to account for the header.
     relax_column_count_more: true,

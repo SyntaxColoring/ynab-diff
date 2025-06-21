@@ -22,6 +22,7 @@ export function parseYNABCSV(
   input: string,
   numRecordLimit?: number,
 ): YNABTransaction[] {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const rawRecords: YNABCSVRecord[] = csvParseSync(input, {
     columns: true, // Auto-detect the column order from the first-row column header.
     to: numRecordLimit,

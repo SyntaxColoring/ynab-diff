@@ -1,11 +1,13 @@
 import currency from "currency.js";
 import React from "react";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const CURRENCY_CODES = Intl.supportedValuesOf("currency");
 export type CurrencyCode = (typeof CURRENCY_CODES)[number];
 
 export type CurrencyFormatter = (amount: currency) => string;
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function getCurrencyFormatter(
   currencyCode: CurrencyCode,
 ): CurrencyFormatter {
