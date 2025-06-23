@@ -1,7 +1,11 @@
 import { parse as csvParseSync } from "csv-parse/browser/esm/sync";
 import currency from "currency.js";
 
-import { ParseError, YNABSubtransaction, YNABTransaction } from "./types";
+import {
+  ParseError,
+  type YNABSubtransaction,
+  type YNABTransaction,
+} from "./types";
 
 const EXPECTED_YNAB_CSV_COLUMNS = [
   "Account",

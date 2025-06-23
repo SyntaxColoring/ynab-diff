@@ -43,6 +43,14 @@ export default tseslint.config(
         "warn",
         { argsIgnorePattern: "^_" },
       ],
+      "@typescript-eslint/consistent-type-imports": [
+        "warn", // Disabled by default.
+        { fixStyle: "inline-type-imports" },
+      ],
+      "@typescript-eslint/consistent-type-exports": [
+        "warn", // Disabled by default.
+        { fixMixedExportsWithInlineTypeSpecifier: true },
+      ],
     },
     settings: {
       react: {

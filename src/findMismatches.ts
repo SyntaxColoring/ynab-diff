@@ -1,4 +1,4 @@
-import currency from "currency.js";
+import type currency from "currency.js";
 
 export function findMismatches(
   ynabTransactionAmounts: currency[],

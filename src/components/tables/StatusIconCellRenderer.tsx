@@ -1,6 +1,6 @@
-import { CustomCellRendererProps } from "ag-grid-react";
+import { type CustomCellRendererProps } from "ag-grid-react";
 
-import { YNABTransaction } from "../../importProcessing";
+import { type YNABTransaction } from "../../importProcessing";
 import { StatusIcon } from "../StatusIcon";
 
 export function StatusIconCellRenderer(

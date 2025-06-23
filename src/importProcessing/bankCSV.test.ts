@@ -2,7 +2,7 @@ import currency from "currency.js";
 import { describe, expect, it } from "vitest";
 
 import { parseBankCSV, parseBankOutflow } from "./bankCSV";
-import { BankTransaction } from "./types";
+import { type BankTransaction } from "./types";
 
 describe("parseBankCSV()", () => {
   it("should parse all fields", () => {

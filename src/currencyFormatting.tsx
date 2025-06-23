@@ -1,4 +1,4 @@
-import currency from "currency.js";
+import type currency from "currency.js";
 import React from "react";
 
 // eslint-disable-next-line react-refresh/only-export-components

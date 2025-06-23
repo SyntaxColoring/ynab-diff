@@ -1,8 +1,8 @@
 import type { Column, SortDirection } from "ag-grid-community";
-import { CustomHeaderProps } from "ag-grid-react";
+import { type CustomHeaderProps } from "ag-grid-react";
 import { useCallback, useSyncExternalStore } from "react";
 
-import { Select, Props as SelectProps } from "../Select";
+import { Select, type Props as SelectProps } from "../Select";
 
 export interface AdditionalProps {
   rightAlign?: boolean;

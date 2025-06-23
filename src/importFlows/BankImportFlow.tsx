@@ -1,13 +1,14 @@
-import React, { useCallback, useMemo, useState } from "react";
+import type React from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useAsync } from "react-async-hook";
 
 import { Button } from "../components/Button";
 import { BankTable } from "../components/tables/BankTable";
 import {
-  BankColumnType,
-  BankTransaction,
   parseBankCSV,
   parseBankOutflow,
+  type BankColumnType,
+  type BankTransaction,
 } from "../importProcessing";
 import { zipEqualLength } from "../zipEqualLength";
 import CSVFileInput from "./CSVFileInput";

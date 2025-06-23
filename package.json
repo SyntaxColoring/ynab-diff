@@ -10,6 +10,7 @@
     "check-types": "tsc --build",
     "check-lint": "eslint .",
     "check-format": "prettier --check .",
+    "fix-lint": "eslint . --fix",
     "fix-format": "prettier --write .",
     "build": "vite build",
     "preview": "vite preview"

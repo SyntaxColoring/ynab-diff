@@ -1,22 +1,26 @@
-import { CellEditRequestEvent, ColDef, GetRowIdFunc } from "ag-grid-community";
+import {
+  type CellEditRequestEvent,
+  type ColDef,
+  type GetRowIdFunc,
+} from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
-import React, { useCallback, useMemo } from "react";
+import { useCallback, useMemo, type Key } from "react";
 
 import {
-  BankColumnType,
-  BankTransaction,
-  BankValue,
+  type BankColumnType,
+  type BankTransaction,
+  type BankValue,
 } from "../../importProcessing";
 import { BankValueCellRenderer } from "./AmountCellRenderer";
 import {
   CustomHeader,
-  AdditionalProps as CustomHeaderProps,
+  type AdditionalProps as CustomHeaderProps,
 } from "./CustomHeader";
 
 export interface Props {
   transactions: {
     transaction: BankTransaction;
-    key: React.Key;
+    key: Key;
     isExcludedFromComparison: boolean;
   }[];
   columnSpecs: {
@@ -24,7 +28,7 @@ export interface Props {
     type: BankColumnType;
   }[];
   onChangeColumnTypes?: (newColumnTypes: BankColumnType[]) => void;
-  onExcludedChange?: (key: React.Key, excluded: boolean) => void;
+  onExcludedChange?: (key: Key, excluded: boolean) => void;
   hideExclusionColumn?: boolean;
   hideColumnTypeControls?: boolean;
   heightMode: "fitContent" | "fillContainer";

@@ -1,8 +1,8 @@
-import { CustomCellRendererProps } from "ag-grid-react";
+import { type CustomCellRendererProps } from "ag-grid-react";
 import type currency from "currency.js";
 
 import { Amount } from "../../currencyFormatting";
-import { BankValue } from "../../importProcessing";
+import { type BankValue } from "../../importProcessing";
 
 export function BankValueCellRenderer(
   props: CustomCellRendererProps<unknown, BankValue, unknown>,

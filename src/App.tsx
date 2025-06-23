@@ -1,5 +1,5 @@
-import currency from "currency.js";
-import React, { Key, useCallback } from "react";
+import type currency from "currency.js";
+import React, { useCallback, type Key } from "react";
 
 import { Button } from "./components/Button";
 import { Select } from "./components/Select";
@@ -8,22 +8,22 @@ import { YNABTable } from "./components/tables/YNABTable";
 import {
   Amount,
   CURRENCY_CODES,
-  CurrencyCode,
   CurrencyFormatterContextProvider,
   getCurrencyFormatter,
+  type CurrencyCode,
 } from "./currencyFormatting";
 import { findMismatches } from "./findMismatches";
 import { BankImportFlow } from "./importFlows/BankImportFlow";
 import { YNABImportFlow } from "./importFlows/YNABImportFlow";
 import {
-  BankColumnType,
-  BankTransaction,
-  YNABTransaction,
+  type BankColumnType,
+  type BankTransaction,
+  type YNABTransaction,
 } from "./importProcessing";
 import { PageLayout } from "./PageLayout";
 import {
-  MismatchFilterState,
   useMismatchFilterState,
+  type MismatchFilterState,
 } from "./useMismatchFilterState";
 
 type AnnotatedTransaction<T> = {

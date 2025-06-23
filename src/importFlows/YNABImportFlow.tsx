@@ -3,7 +3,7 @@ import { useAsync } from "react-async-hook";
 
 import { Button } from "../components/Button";
 import { Select } from "../components/Select";
-import { parseYNABCSV, YNABTransaction } from "../importProcessing";
+import { parseYNABCSV, type YNABTransaction } from "../importProcessing";
 import CSVFileInput from "./CSVFileInput";
 import { useSelectYNABAccount } from "./useSelectYNABAccount";
 

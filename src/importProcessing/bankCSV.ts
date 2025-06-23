@@ -1,7 +1,11 @@
 import { parse as csvParseSync } from "csv-parse/browser/esm/sync";
 import currency from "currency.js";
 
-import { BankColumnType, BankTransaction, BankValue } from "./types";
+import {
+  type BankColumnType,
+  type BankTransaction,
+  type BankValue,
+} from "./types";
 
 export function parseBankCSV(
   input: string,

@@ -1,12 +1,16 @@
-import { CellEditRequestEvent, ColDef, GetRowIdFunc } from "ag-grid-community";
+import {
+  type CellEditRequestEvent,
+  type ColDef,
+  type GetRowIdFunc,
+} from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import React, { useMemo } from "react";
 
-import { YNABTransaction } from "../../importProcessing";
+import { type YNABTransaction } from "../../importProcessing";
 import { AmountCellRenderer } from "./AmountCellRenderer";
 import {
   CustomHeader,
-  AdditionalProps as CustomHeaderProps,
+  type AdditionalProps as CustomHeaderProps,
 } from "./CustomHeader";
 import { StatusIconCellRenderer } from "./StatusIconCellRenderer";
 

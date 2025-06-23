@@ -1,7 +1,7 @@
-import currency from "currency.js";
+import type currency from "currency.js";
 import React from "react";
 
-import { Mismatch } from "./findMismatches";
+import { type Mismatch } from "./findMismatches";
 
 export interface MismatchFilterState {
   /** The mismatches that should be presented to the user as togglable filters, in order.
