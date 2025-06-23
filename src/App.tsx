@@ -5,13 +5,7 @@ import { Button } from "./components/Button";
 import { Select } from "./components/Select";
 import { BankTable } from "./components/tables/BankTable";
 import { YNABTable } from "./components/tables/YNABTable";
-import {
-  Amount,
-  CURRENCY_CODES,
-  CurrencyFormatterContextProvider,
-  getCurrencyFormatter,
-  type CurrencyCode,
-} from "./currencyFormatting";
+import { Amount, CURRENCY_CODES } from "./currencyFormatting";
 import { findMismatches } from "./findMismatches";
 import { BankImportFlow } from "./importFlows/BankImportFlow";
 import { YNABImportFlow } from "./importFlows/YNABImportFlow";
@@ -21,6 +15,8 @@ import {
   type YNABTransaction,
 } from "./importProcessing";
 import { PageLayout } from "./PageLayout";
+import { setCurrencyFormat } from "./redux/currencyFormatSlice";
+import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import {
   useMismatchFilterState,
   type MismatchFilterState,
@@ -36,11 +32,8 @@ type AnnotatedYNABTransaction = AnnotatedTransaction<YNABTransaction>;
 type AnnotatedBankTransaction = AnnotatedTransaction<BankTransaction>;
 
 export default function App(): React.JSX.Element {
-  const [currencyCode, setCurrencyCode] = React.useState<CurrencyCode>("USD");
-  const currencyFormatter = React.useMemo(
-    () => getCurrencyFormatter(currencyCode),
-    [currencyCode],
-  );
+  const dispatch = useAppDispatch();
+  const currencyCode = useAppSelector((state) => state.currencyFormat);
 
   const [showingExcludedTransactions, setShowingExcludedTransactions] =
     React.useState<boolean>(true);
@@ -159,7 +152,7 @@ export default function App(): React.JSX.Element {
         <Select
           options={CURRENCY_CODES}
           value={currencyCode}
-          onChange={setCurrencyCode}
+          onChange={(value) => dispatch(setCurrencyFormat(value))}
         />
       </label>
     </div>
@@ -305,16 +298,14 @@ export default function App(): React.JSX.Element {
   );
 
   return (
-    <CurrencyFormatterContextProvider value={currencyFormatter}>
-      <PageLayout
-        {...{
-          headerArea,
-          filterArea,
-          ynabArea,
-          bankArea,
-        }}
-      />
-    </CurrencyFormatterContextProvider>
+    <PageLayout
+      {...{
+        headerArea,
+        filterArea,
+        ynabArea,
+        bankArea,
+      }}
+    />
   );
 }
 
