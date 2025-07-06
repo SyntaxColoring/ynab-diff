@@ -9,6 +9,7 @@ import { useSelectYNABAccount } from "./useSelectYNABAccount";
 
 export interface YNABImportFlowProps {
   showCancelButton: boolean;
+  initialFilename?: string | null;
   onSubmit: (
     transactions: YNABTransaction[],
     account: string,
@@ -19,6 +20,7 @@ export interface YNABImportFlowProps {
 
 export function YNABImportFlow({
   showCancelButton,
+  initialFilename,
   onSubmit,
   onCancel,
 }: YNABImportFlowProps): React.JSX.Element {
@@ -32,7 +34,7 @@ export function YNABImportFlow({
     <form className="flex flex-col space-y-8">
       <h1>Import CSV from YNAB</h1>
 
-      <CSVFileInput onChange={setFile} />
+      <CSVFileInput onChange={setFile} placeholderFilename="foo" />
 
       {parseState.loading && <p>Loading...</p>}
 

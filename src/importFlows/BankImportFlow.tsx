@@ -26,12 +26,13 @@ export interface Result {
 
 export interface Props {
   showCancelButton: boolean;
+  initialFilename: string | null;
   onSubmit: (result: Result) => void;
   onCancel: () => void;
 }
 
 export function BankImportFlow(props: Props): React.JSX.Element {
-  const { showCancelButton, onSubmit, onCancel } = props;
+  const { showCancelButton, initialFilename, onSubmit, onCancel } = props;
 
   const [file, setFile] = useState<File | null>(null);
   const parseState = useAsync(parse, [file]);
@@ -102,7 +103,7 @@ export function BankImportFlow(props: Props): React.JSX.Element {
     <form className="h-full flex flex-col space-y-8">
       <h1>Import CSV from Bank</h1>
 
-      <CSVFileInput onChange={setFile} />
+      <CSVFileInput onChange={setFile} placeholderFilename={file !== null ? null : initialFilename}/>
 
       {tableData !== null && (
         <>

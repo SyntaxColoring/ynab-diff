@@ -1,6 +1,6 @@
-import type { ComponentPropsWithoutRef } from "react";
+import type { ComponentProps } from "react";
 
-export type Props = ComponentPropsWithoutRef<"input">;
+export type Props = ComponentProps<"input">;
 
 /** `<input type="file" ... />` with custom styling. */
 export function FileInput(props: Props): React.JSX.Element {

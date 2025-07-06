@@ -287,6 +287,7 @@ export default function App(): React.JSX.Element {
             }
           }}
           showCancelButton={bankImport.status === "reimporting"}
+          initialFilename={bankImport.status === "reimporting" ? bankImport.filename : null}
           onSubmit={({ filename, columnSpecs, transactions }) => {
             setBankImport({
               status: "imported",
