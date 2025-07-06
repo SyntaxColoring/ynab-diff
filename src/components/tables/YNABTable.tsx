@@ -18,9 +18,9 @@ export interface YNABProps {
   data: {
     transaction: YNABTransaction;
     isExcludedFromComparison: boolean;
-    key: React.Key;
+    index: number;
   }[];
-  onExcludedChange: (key: React.Key, excluded: boolean) => void;
+  toggleExcluded: (index: number) => void;
   hideExclusionColumn?: boolean;
   heightMode: "fitContent" | "fillContainer";
 }
@@ -73,7 +73,7 @@ const dataColDefs: ColDef<TData, unknown>[] = [
 ];
 
 export function YNABTable(props: YNABProps): React.JSX.Element {
-  const { data, heightMode, onExcludedChange, hideExclusionColumn } = props;
+  const { data, heightMode, toggleExcluded, hideExclusionColumn } = props;
 
   const colDefs: ColDef<TData, unknown>[] = useMemo(
     () => [
@@ -92,10 +92,10 @@ export function YNABTable(props: YNABProps): React.JSX.Element {
     (params: CellEditRequestEvent<TData, boolean>) => {
       const { data, newValue } = params;
       if (newValue != null) {
-        onExcludedChange?.(data.key, newValue);
+        toggleExcluded?.(data.index);
       }
     },
-    [onExcludedChange],
+    [toggleExcluded],
   );
 
   return (
@@ -112,5 +112,5 @@ export function YNABTable(props: YNABProps): React.JSX.Element {
 }
 
 const getRowId: GetRowIdFunc<TData> = (params) => {
-  return String(params.data.key);
+  return String(params.data.index);
 };

@@ -2,7 +2,7 @@ import type currency from "currency.js";
 import type React from "react";
 
 import { currencyFormatSlice } from "./redux/currencyFormatSlice";
-import { useAppSelector } from "./redux/hooks";
+import { useAppSelector } from "./redux/typedHooks";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const CURRENCY_CODES = Intl.supportedValuesOf("currency");

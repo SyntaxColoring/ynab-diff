@@ -1,147 +1,47 @@
+import { createSelector } from "@reduxjs/toolkit";
 import type currency from "currency.js";
-import React, { useCallback, type Key } from "react";
 
 import { Button } from "./components/Button";
 import { Select } from "./components/Select";
 import { BankTable } from "./components/tables/BankTable";
 import { YNABTable } from "./components/tables/YNABTable";
 import { Amount, CURRENCY_CODES } from "./currencyFormatting";
-import { findMismatches } from "./findMismatches";
 import { BankImportFlow } from "./importFlows/BankImportFlow";
 import { YNABImportFlow } from "./importFlows/YNABImportFlow";
-import {
-  type BankColumnType,
-  type BankTransaction,
-  type YNABTransaction,
-} from "./importProcessing";
 import { PageLayout } from "./PageLayout";
 import { setCurrencyFormat } from "./redux/currencyFormatSlice";
-import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import {
-  useMismatchFilterState,
-  type MismatchFilterState,
-} from "./useMismatchFilterState";
-
-type AnnotatedTransaction<T> = {
-  transaction: T;
-  key: React.Key;
-  isExcludedFromComparison: boolean;
-};
-
-type AnnotatedYNABTransaction = AnnotatedTransaction<YNABTransaction>;
-type AnnotatedBankTransaction = AnnotatedTransaction<BankTransaction>;
+  abortReimport,
+  beginReimport,
+  completeBankImport,
+  completeYNABImport,
+  selectAmountFilters,
+  selectBankTransactionsPassingFilter,
+  selectYNABTransactionsPassingFilter,
+  toggleFilter,
+  toggleShowExcludedFromComparison,
+  toggleTransactionExclusion,
+} from "./redux/tablesSlice";
+import { useAppDispatch, useAppSelector } from "./redux/typedHooks";
 
 export default function App(): React.JSX.Element {
   const dispatch = useAppDispatch();
+
   const currencyCode = useAppSelector((state) => state.currencyFormat);
-
-  const [showingExcludedTransactions, setShowingExcludedTransactions] =
-    React.useState<boolean>(true);
-
-  const [ynabImport, setYNABImport] = React.useState<
-    | {
-        status: "imported" | "reimporting";
-        filename: string;
-        account: string;
-        transactions: AnnotatedYNABTransaction[];
-      }
-    | { status: "noImportYet" }
-  >({ status: "noImportYet" });
-
-  const [bankImport, setBankImport] = React.useState<
-    | {
-        status: "imported" | "reimporting";
-        filename: string;
-        transactions: AnnotatedBankTransaction[];
-        columnSpecs: {
-          name: string;
-          type: BankColumnType;
-        }[];
-      }
-    | { status: "noImportYet" }
-  >({ status: "noImportYet" });
-
-  const mismatches = React.useMemo(() => {
-    if (
-      ynabImport.status === "noImportYet" ||
-      bankImport.status === "noImportYet"
-    )
-      return null;
-
-    const ynabTransactionsInComparison = ynabImport.transactions.filter(
-      (e) => !e.isExcludedFromComparison,
-    );
-    const bankTransactionsInComparison = bankImport.transactions.filter(
-      (e) => !e.isExcludedFromComparison,
-    );
-
-    return findMismatches(
-      ynabTransactionsInComparison.map((t) => t.transaction.outflow),
-      bankTransactionsInComparison.map((t) => t.transaction.outflow),
-    );
-  }, [ynabImport, bankImport]);
-  const mismatchCount = (mismatches ?? []).reduce(
-    (acc, mismatch) => acc + Math.abs(mismatch.bankCount - mismatch.ynabCount),
-    0,
+  const showingExcludedTransactions = useAppSelector(
+    (state) => state.tables.showExcludedFromComparison,
   );
 
-  const filterState = useMismatchFilterState(mismatches ?? []);
+  const ynabImport = useAppSelector((state) => state.tables.ynab);
+  const bankImport = useAppSelector((state) => state.tables.bank);
 
-  const visibleYNABTransactions =
-    filterState &&
-    ynabImport.status !== "noImportYet" &&
-    ynabImport.transactions.filter(
-      (t) =>
-        filterState.amountPassesFilter(t.transaction.outflow) &&
-        (!t.isExcludedFromComparison || showingExcludedTransactions),
-    );
-  const visibleBankTransactions =
-    filterState &&
-    bankImport.status !== "noImportYet" &&
-    bankImport.transactions.filter((t) => {
-      return (
-        filterState.amountPassesFilter(t.transaction.outflow) &&
-        (!t.isExcludedFromComparison || showingExcludedTransactions)
-      );
-    });
+  const mismatchCount = useAppSelector(selectMismatchCount);
 
-  const handleYNABExcludedChange = useCallback(
-    (key: Key, excluded: boolean) => {
-      if (ynabImport.status !== "noImportYet" && visibleYNABTransactions) {
-        // TODO: Make this not O(n).
-        const indexToChange = ynabImport.transactions.findIndex(
-          (t) => t.key === key,
-        );
-        const newYNABTransactions = [...ynabImport.transactions];
-        newYNABTransactions[indexToChange] = {
-          ...ynabImport.transactions[indexToChange],
-          isExcludedFromComparison: excluded,
-        };
-        setYNABImport({ ...ynabImport, transactions: newYNABTransactions });
-      }
-    },
-    [visibleYNABTransactions, ynabImport],
+  const visibleYNABTransactions = useAppSelector(
+    selectYNABTransactionsPassingFilter,
   );
-
-  const handleBankExcludedChange = useCallback(
-    (key: Key, excluded: boolean) => {
-      if (bankImport.status !== "noImportYet" && visibleBankTransactions) {
-        // TODO: Make this not O(n).
-        const indexToChange = bankImport.transactions.findIndex(
-          (t) => t.key === key,
-        );
-        const newBankTransactions = [...bankImport.transactions];
-        newBankTransactions[indexToChange] = {
-          ...bankImport.transactions[indexToChange],
-          isExcludedFromComparison: excluded,
-        };
-        setBankImport({
-          ...bankImport,
-          transactions: newBankTransactions,
-        });
-      }
-    },
-    [visibleBankTransactions, bankImport],
+  const visibleBankTransactions = useAppSelector(
+    selectBankTransactionsPassingFilter,
   );
 
   const headerArea = (
@@ -160,15 +60,15 @@ export default function App(): React.JSX.Element {
 
   const filterArea = (
     <>
-      {filterState !== null && (
+      {
         <section className="col-span-2">
           <h2>
             {mismatchCount} mismatched{" "}
             {mismatchCount == 1 ? "transaction" : "transactions"}
           </h2>
-          <MismatchFiltersList {...filterState} />
+          <MismatchFiltersList />
         </section>
-      )}
+      }
 
       <section className="col-span-2">
         <label>
@@ -176,7 +76,7 @@ export default function App(): React.JSX.Element {
           <input
             type="checkbox"
             checked={showingExcludedTransactions}
-            onChange={(e) => setShowingExcludedTransactions(e.target.checked)}
+            onChange={() => dispatch(toggleShowExcludedFromComparison())}
           />
         </label>
       </section>
@@ -192,9 +92,7 @@ export default function App(): React.JSX.Element {
               {ynabImport.transactions.length} YNAB transactions{" "}
               <Button
                 variant="secondary"
-                onClick={() =>
-                  setYNABImport({ ...ynabImport, status: "reimporting" })
-                }
+                onClick={() => dispatch(beginReimport({ side: "ynab" }))}
               >
                 Edit
               </Button>
@@ -204,7 +102,9 @@ export default function App(): React.JSX.Element {
             {visibleYNABTransactions && (
               <YNABTable
                 data={visibleYNABTransactions}
-                onExcludedChange={handleYNABExcludedChange}
+                toggleExcluded={(index) =>
+                  dispatch(toggleTransactionExclusion({ side: "ynab", index }))
+                }
                 heightMode="fillContainer"
               />
             )}
@@ -212,30 +112,26 @@ export default function App(): React.JSX.Element {
         </div>
       ) : (
         <YNABImportFlow
-          onCancel={() => {
-            if (ynabImport.status === "reimporting") {
-              // if-statement for type-checking. Should always pass in practice.
-              setYNABImport({ ...ynabImport, status: "imported" });
-            }
-          }}
+          onCancel={() => dispatch(abortReimport({ side: "ynab" }))}
           showCancelButton={ynabImport.status === "reimporting"}
           onSubmit={(transactions, account, filename) => {
-            setYNABImport({
-              status: "imported",
-              account,
-              filename,
-              transactions: transactions.map((transaction, index) => ({
-                transaction,
-                key: index,
-                isExcludedFromComparison:
-                  // Exclude uncleared transactions from the comparison by default
-                  // because they probably won't be in the bank's export (though this can depend on the bank).
-                  //
-                  // Also exclude reconciled transactions by default.
-                  // This is more arbitrary and I'm honestly not sure if it's right.
-                  transaction.cleared !== "cleared",
-              })),
-            });
+            dispatch(
+              completeYNABImport({
+                account,
+                filename,
+                transactions: transactions.map((transaction, index) => ({
+                  transaction,
+                  index,
+                  isExcludedFromComparison:
+                    // Exclude uncleared transactions from the comparison by default
+                    // because they probably won't be in the bank's export (though this can depend on the bank).
+                    //
+                    // Also exclude reconciled transactions by default.
+                    // This is more arbitrary and I'm honestly not sure if it's right.
+                    transaction.cleared !== "cleared",
+                })),
+              }),
+            );
           }}
         />
       )}
@@ -251,9 +147,7 @@ export default function App(): React.JSX.Element {
               {bankImport.transactions.length} Bank transactions{" "}
               <Button
                 variant="secondary"
-                onClick={() =>
-                  setBankImport({ ...bankImport, status: "reimporting" })
-                }
+                onClick={() => dispatch(beginReimport({ side: "bank" }))}
               >
                 Edit
               </Button>
@@ -263,7 +157,9 @@ export default function App(): React.JSX.Element {
             {visibleBankTransactions && (
               <BankTable
                 transactions={visibleBankTransactions}
-                onExcludedChange={handleBankExcludedChange}
+                toggleExcluded={(index) =>
+                  dispatch(toggleTransactionExclusion({ side: "bank", index }))
+                }
                 columnSpecs={bankImport.columnSpecs}
                 hideColumnTypeControls
                 heightMode="fillContainer"
@@ -273,24 +169,20 @@ export default function App(): React.JSX.Element {
         </div>
       ) : (
         <BankImportFlow
-          onCancel={() => {
-            if (bankImport.status === "reimporting") {
-              // if-statement for type-checking. Should always pass in practice.
-              setBankImport({ ...bankImport, status: "imported" });
-            }
-          }}
+          onCancel={() => dispatch(abortReimport({ side: "bank" }))}
           showCancelButton={bankImport.status === "reimporting"}
           onSubmit={({ filename, columnSpecs, transactions }) => {
-            setBankImport({
-              status: "imported",
-              filename,
-              columnSpecs,
-              transactions: transactions.map((transaction, index) => ({
-                transaction,
-                key: index,
-                isExcludedFromComparison: false,
-              })),
-            });
+            dispatch(
+              completeBankImport({
+                filename,
+                columnSpecs,
+                transactions: transactions.map((transaction, index) => ({
+                  transaction,
+                  index,
+                  isExcludedFromComparison: false,
+                })),
+              }),
+            );
           }}
         />
       )}
@@ -309,16 +201,22 @@ export default function App(): React.JSX.Element {
   );
 }
 
-function MismatchFiltersList(props: MismatchFilterState): React.JSX.Element {
+function MismatchFiltersList(): React.JSX.Element {
+  const dispatch = useAppDispatch();
+
+  const filters = useAppSelector(selectAmountFilters) ?? [];
+
   return (
     <ul>
-      {props.availableFilters.map((m) => (
-        <li key={m.key} className="inline-block">
+      {filters.map((filter) => (
+        <li key={filter.key} className="inline-block">
           <MismatchToggleButton
-            amount={m.mismatch.amount}
-            count={Math.abs(m.mismatch.bankCount - m.mismatch.ynabCount)}
-            enabled={m.filterEnabled}
-            onChange={(enabled) => props.setFilterEnabled(m.key, enabled)}
+            amount={filter.mismatch.amount}
+            count={Math.abs(
+              filter.mismatch.bankCount - filter.mismatch.ynabCount,
+            )}
+            enabled={filter.filterEnabled}
+            onClick={() => dispatch(toggleFilter({ key: filter.key }))}
           />
         </li>
       ))}
@@ -330,19 +228,27 @@ function MismatchToggleButton({
   amount,
   count,
   enabled,
-  onChange,
+  onClick,
 }: {
   amount: currency;
   count: number;
   enabled: boolean;
-  onChange: (enabled: boolean) => void;
+  onClick: () => void;
 }): React.JSX.Element {
   return (
     <button
       className={enabled ? "font-bold text-blue-500" : ""}
-      onClick={() => onChange(!enabled)}
+      onClick={onClick}
     >
       <Amount amount={amount} /> ({count})
     </button>
   );
 }
+
+const selectMismatchCount = createSelector(selectAmountFilters, (filters) => {
+  return (filters ?? [])
+    .map((filter) =>
+      Math.abs(filter.mismatch.bankCount - filter.mismatch.ynabCount),
+    )
+    .reduce((acc, n) => acc + n, 0);
+});

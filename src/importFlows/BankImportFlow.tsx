@@ -76,7 +76,7 @@ export function BankImportFlow(props: Props): React.JSX.Element {
         columnTypes: selectedBankColumnTypes,
         row,
       }),
-      key: index,
+      index,
       isExcludedFromComparison: false, // Visually hidden anyway, so doesn't matter.
     }));
     const previewedTransactions = transactions.slice(

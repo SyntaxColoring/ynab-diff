@@ -27,4 +27,3 @@ export const currencyFormatSlice = createSlice({
 });
 
 export const { setCurrencyFormat } = currencyFormatSlice.actions;
-export const currencyFormatReducer = currencyFormatSlice.reducer;

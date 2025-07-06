@@ -4,7 +4,7 @@ import {
   type GetRowIdFunc,
 } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
-import { useCallback, useMemo, type Key } from "react";
+import { useCallback, useMemo } from "react";
 
 import {
   type BankColumnType,
@@ -20,7 +20,7 @@ import {
 export interface Props {
   transactions: {
     transaction: BankTransaction;
-    key: Key;
+    index: number;
     isExcludedFromComparison: boolean;
   }[];
   columnSpecs: {
@@ -28,7 +28,7 @@ export interface Props {
     type: BankColumnType;
   }[];
   onChangeColumnTypes?: (newColumnTypes: BankColumnType[]) => void;
-  onExcludedChange?: (key: Key, excluded: boolean) => void;
+  toggleExcluded?: (index: number) => void;
   hideExclusionColumn?: boolean;
   hideColumnTypeControls?: boolean;
   heightMode: "fitContent" | "fillContainer";
@@ -44,7 +44,7 @@ export function BankTable(props: Props): React.JSX.Element {
     hideColumnTypeControls,
     hideExclusionColumn,
     onChangeColumnTypes,
-    onExcludedChange,
+    toggleExcluded,
   } = props;
 
   const colDefs = useMemo(() => {
@@ -106,10 +106,10 @@ export function BankTable(props: Props): React.JSX.Element {
     (params: CellEditRequestEvent<TData, boolean>) => {
       const { data, newValue } = params;
       if (newValue != null) {
-        onExcludedChange?.(data.key, newValue);
+        toggleExcluded?.(data.index);
       }
     },
-    [onExcludedChange],
+    [toggleExcluded],
   );
 
   return (
@@ -131,7 +131,7 @@ function bankColumnIsAmount(
 }
 
 const getRowId: GetRowIdFunc<TData> = (params) => {
-  return String(params.data.key);
+  return String(params.data.index);
 };
 
 function comparator(

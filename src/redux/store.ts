@@ -1,10 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-import { currencyFormatReducer } from "./currencyFormatSlice";
+import { currencyFormatSlice } from "./currencyFormatSlice";
+import { tablesSlice } from "./tablesSlice";
 
+/** The root Redux store. */
 export const store = configureStore({
   reducer: {
-    currencyFormat: currencyFormatReducer,
+    currencyFormat: currencyFormatSlice.reducer,
+    tables: tablesSlice.reducer,
+  },
+  devTools: {
+    serialize: true,
   },
 });
 
