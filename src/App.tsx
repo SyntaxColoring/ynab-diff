@@ -1,5 +1,7 @@
 import { createSelector } from "@reduxjs/toolkit";
 import type currency from "currency.js";
+import { useCallback } from "react";
+import { ActionCreators as ReduxUndoActionCreators } from "redux-undo";
 
 import { Button } from "./components/Button";
 import { Select } from "./components/Select";
@@ -23,32 +25,73 @@ import {
   toggleTransactionExclusion,
 } from "./redux/tablesSlice";
 import { useAppDispatch, useAppSelector } from "./redux/typedHooks";
+import { useUndoRedoShortcuts } from "./useUndoRedoShortcuts";
 
 export default function App(): React.JSX.Element {
   const dispatch = useAppDispatch();
 
-  const currencyCode = useAppSelector((state) => state.currencyFormat);
+  const handleUndo = useCallback(
+    () => dispatch(ReduxUndoActionCreators.undo()),
+    [dispatch],
+  );
+  const handleRedo = useCallback(
+    () => dispatch(ReduxUndoActionCreators.redo()),
+    [dispatch],
+  );
+  const canUndo = useAppSelector((state) => state.past.length > 0);
+  const canRedo = useAppSelector((state) => state.future.length > 0);
+
+  const shortcuts = useUndoRedoShortcuts({
+    onUndo: handleUndo,
+    onRedo: handleRedo,
+  });
+
+  const currencyCode = useAppSelector((state) => state.present.currencyFormat);
   const showingExcludedTransactions = useAppSelector(
-    (state) => state.tables.showExcludedFromComparison,
+    (state) => state.present.tables.showExcludedFromComparison,
   );
 
-  const ynabImport = useAppSelector((state) => state.tables.ynab);
-  const bankImport = useAppSelector((state) => state.tables.bank);
+  const ynabImport = useAppSelector((state) => state.present.tables.ynab);
+  const bankImport = useAppSelector((state) => state.present.tables.bank);
 
-  const mismatchCount = useAppSelector(selectMismatchCount);
-
-  const visibleYNABTransactions = useAppSelector(
-    selectYNABTransactionsPassingFilter,
+  const mismatchCount = useAppSelector((state) =>
+    selectMismatchCount(state.present),
   );
-  const visibleBankTransactions = useAppSelector(
-    selectBankTransactionsPassingFilter,
+
+  const visibleYNABTransactions = useAppSelector((state) =>
+    selectYNABTransactionsPassingFilter(state.present),
+  );
+  const visibleBankTransactions = useAppSelector((state) =>
+    selectBankTransactionsPassingFilter(state.present),
   );
 
   const headerArea = (
     // TODO: Title, about, contact, and stuff currency dropdown into a settings dialog
-    <div className="text-right">
-      <label>
-        Currency format
+    <div className="flex gap-8 items-center justify-between">
+      <div className="flex gap-2">
+        <Button
+          variant="secondary"
+          onClick={handleUndo}
+          disabled={!canUndo}
+          title={`Undo (${shortcuts.undo.instructions.text})`}
+          // TODO: aria-keyshortcuts is read redundantly with title. Does it make sense to use both?
+          aria-keyshortcuts={shortcuts.undo.instructions.aria}
+        >
+          Undo <span aria-hidden>↶</span>
+        </Button>
+        <Button
+          variant="secondary"
+          onClick={handleRedo}
+          disabled={!canRedo}
+          title={`Redo (${shortcuts.redo.instructions.text})`}
+          // TODO: aria-keyshortcuts is read redundantly with title. Does it make sense to use both?
+          aria-keyshortcuts={shortcuts.redo.instructions.aria}
+        >
+          Redo <span aria-hidden>↷</span>
+        </Button>
+      </div>
+      <label className="flex gap-2">
+        <span>Currency format</span>
         <Select
           options={CURRENCY_CODES}
           value={currencyCode}
@@ -204,7 +247,8 @@ export default function App(): React.JSX.Element {
 function MismatchFiltersList(): React.JSX.Element {
   const dispatch = useAppDispatch();
 
-  const filters = useAppSelector(selectAmountFilters) ?? [];
+  const filters =
+    useAppSelector((state) => selectAmountFilters(state.present)) ?? [];
 
   return (
     <ul>

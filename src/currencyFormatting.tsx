@@ -30,8 +30,8 @@ export function Amount({
   amount: currency;
   formatter?: CurrencyFormatter;
 }): React.JSX.Element {
-  const globalFormatter = useAppSelector(
-    currencyFormatSlice.selectors.selectCurrencyFormatter,
+  const globalFormatter = useAppSelector((state) =>
+    currencyFormatSlice.selectors.selectCurrencyFormatter(state.present),
   );
   const overriddenFormatter = formatter || globalFormatter;
   return <>{overriddenFormatter(amount)}</>;

@@ -1,15 +1,23 @@
-import { configureStore, isPlain } from "@reduxjs/toolkit";
+import { combineReducers, configureStore, isPlain } from "@reduxjs/toolkit";
 import currency from "currency.js";
+import undoable from "redux-undo";
 
 import { currencyFormatSlice } from "./currencyFormatSlice";
 import { tablesSlice } from "./tablesSlice";
 
-/** The root Redux store. */
-export const store = configureStore({
-  reducer: {
+const UNDO_HISTORY_LIMIT = 50;
+
+const rootReducer = undoable(
+  combineReducers({
     currencyFormat: currencyFormatSlice.reducer,
     tables: tablesSlice.reducer,
-  },
+  }),
+  { limit: UNDO_HISTORY_LIMIT },
+);
+
+/** The root Redux store. */
+export const store = configureStore({
+  reducer: rootReducer,
 
   // Redux strongly recommends sticking to primitive objects. I think that guideline is dumb --
   // data structures are good and so are domain-specific types -- so, silence all the warnings

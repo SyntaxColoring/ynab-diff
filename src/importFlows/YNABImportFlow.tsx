@@ -71,7 +71,7 @@ export function YNABImportFlow({
         )}
         <Button
           disabled={!(parseState.result != null && selectedAccount !== null)}
-          disabledReason={
+          title={
             parseState.result == null
               ? "To continue, select a file"
               : "To continue, select an account"

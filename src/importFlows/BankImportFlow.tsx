@@ -129,7 +129,7 @@ export function BankImportFlow(props: Props): React.JSX.Element {
         )}
         <Button
           disabled={buttonStatus.disabled}
-          disabledReason={buttonStatus.disabledReason}
+          title={buttonStatus.disabledReason}
           onClick={handleImportClick}
         >
           {getImportButtonText(tableData?.transactions.length)}
