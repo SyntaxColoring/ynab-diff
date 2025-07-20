@@ -1,12 +1,12 @@
 import { createSelector } from "@reduxjs/toolkit";
-import type currency from "currency.js";
 
 import { Button } from "./components/Button";
 import { BankTable } from "./components/tables/BankTable";
 import { YNABTable } from "./components/tables/YNABTable";
-import { Amount } from "./currencyFormatting";
+import { Header } from "./Header";
 import { BankImportFlow } from "./importForms/BankImportFlow";
 import { YNABImportFlow } from "./importForms/YNABImportFlow";
+import { MismatchFiltersList } from "./MismatchFiltersList";
 import { PageLayout } from "./PageLayout";
 import {
   abortReimport,
@@ -16,57 +16,22 @@ import {
   selectAmountFilters,
   selectBankTransactionsPassingFilter,
   selectYNABTransactionsPassingFilter,
-  toggleFilter,
   toggleShowExcludedFromComparison,
   toggleTransactionExclusion,
 } from "./redux/tablesSlice";
 import { useAppDispatch, useAppSelector } from "./redux/typedHooks";
-import { Header } from "./Header";
 
 export default function App(): React.JSX.Element {
   const dispatch = useAppDispatch();
 
-  const showingExcludedTransactions = useAppSelector(
-    (state) => state.present.tables.showExcludedFromComparison,
-  );
-
   const ynabImport = useAppSelector((state) => state.present.tables.ynab);
   const bankImport = useAppSelector((state) => state.present.tables.bank);
-
-  const mismatchCount = useAppSelector((state) =>
-    selectMismatchCount(state.present),
-  );
 
   const visibleYNABTransactions = useAppSelector((state) =>
     selectYNABTransactionsPassingFilter(state.present),
   );
   const visibleBankTransactions = useAppSelector((state) =>
     selectBankTransactionsPassingFilter(state.present),
-  );
-
-  const filterArea = (
-    <>
-      {
-        <section className="col-span-2">
-          <h2>
-            {mismatchCount} mismatched{" "}
-            {mismatchCount == 1 ? "transaction" : "transactions"}
-          </h2>
-          <MismatchFiltersList />
-        </section>
-      }
-
-      <section className="col-span-2">
-        <label>
-          Show excluded transactions
-          <input
-            type="checkbox"
-            checked={showingExcludedTransactions}
-            onChange={() => dispatch(toggleShowExcludedFromComparison())}
-          />
-        </label>
-      </section>
-    </>
   );
 
   const ynabArea = (
@@ -178,8 +143,8 @@ export default function App(): React.JSX.Element {
   return (
     <PageLayout
       headerArea={<Header />}
+      filterArea={<FilterAreaContents />}
       {...{
-        filterArea,
         ynabArea,
         bankArea,
       }}
@@ -187,48 +152,36 @@ export default function App(): React.JSX.Element {
   );
 }
 
-function MismatchFiltersList(): React.JSX.Element {
+function FilterAreaContents(): React.JSX.Element {
   const dispatch = useAppDispatch();
-
-  const filters =
-    useAppSelector((state) => selectAmountFilters(state.present)) ?? [];
-
-  return (
-    <ul>
-      {filters.map((filter) => (
-        <li key={filter.key} className="inline-block">
-          <MismatchToggleButton
-            amount={filter.mismatch.amount}
-            count={Math.abs(
-              filter.mismatch.bankCount - filter.mismatch.ynabCount,
-            )}
-            enabled={filter.filterEnabled}
-            onClick={() => dispatch(toggleFilter({ key: filter.key }))}
-          />
-        </li>
-      ))}
-    </ul>
+  const mismatchCount = useAppSelector((state) =>
+    selectMismatchCount(state.present),
   );
-}
+  const showingExcludedTransactions = useAppSelector(
+    (state) => state.present.tables.showExcludedFromComparison,
+  );
 
-function MismatchToggleButton({
-  amount,
-  count,
-  enabled,
-  onClick,
-}: {
-  amount: currency;
-  count: number;
-  enabled: boolean;
-  onClick: () => void;
-}): React.JSX.Element {
   return (
-    <button
-      className={enabled ? "font-bold text-blue-500" : ""}
-      onClick={onClick}
-    >
-      <Amount amount={amount} /> ({count})
-    </button>
+    <>
+      <section className="col-span-2">
+        <h2>
+          {mismatchCount} mismatched{" "}
+          {mismatchCount == 1 ? "transaction" : "transactions"}
+        </h2>
+        <MismatchFiltersList />
+      </section>
+
+      <section className="col-span-2">
+        <label>
+          Show excluded transactions
+          <input
+            type="checkbox"
+            checked={showingExcludedTransactions}
+            onChange={() => dispatch(toggleShowExcludedFromComparison())}
+          />
+        </label>
+      </section>
+    </>
   );
 }
 
