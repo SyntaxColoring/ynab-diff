@@ -5,8 +5,8 @@ import { Button } from "./components/Button";
 import { BankTable } from "./components/tables/BankTable";
 import { YNABTable } from "./components/tables/YNABTable";
 import { Amount } from "./currencyFormatting";
-import { BankImportFlow } from "./importFlows/BankImportFlow";
-import { YNABImportFlow } from "./importFlows/YNABImportFlow";
+import { BankImportFlow } from "./importForms/BankImportFlow";
+import { YNABImportFlow } from "./importForms/YNABImportFlow";
 import { PageLayout } from "./PageLayout";
 import {
   abortReimport,
