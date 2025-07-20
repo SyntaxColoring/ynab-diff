@@ -30,6 +30,10 @@ export interface UndoRedoCallbacks {
   onRedo?: () => void;
 }
 
+/**
+ * Binds the provided callbacks to platform-specific global keyboard shortcuts.
+ * Returns information about the shortcuts.
+ */
 export function useUndoRedoShortcuts(
   callbacks: UndoRedoCallbacks,
 ): PlatformShortcuts {
