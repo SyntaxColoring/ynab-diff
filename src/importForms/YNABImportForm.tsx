@@ -7,7 +7,7 @@ import { parseYNABCSV, type YNABTransaction } from "../importProcessing";
 import CSVFileInput from "./CSVFileInput";
 import { useSelectYNABAccount } from "./useSelectYNABAccount";
 
-export interface YNABImportFlowProps {
+export interface YNABImportFormProps {
   showCancelButton: boolean;
   onSubmit: (
     transactions: YNABTransaction[],
@@ -17,11 +17,11 @@ export interface YNABImportFlowProps {
   onCancel: () => void;
 }
 
-export function YNABImportFlow({
+export function YNABImportForm({
   showCancelButton,
   onSubmit,
   onCancel,
-}: YNABImportFlowProps): React.JSX.Element {
+}: YNABImportFormProps): React.JSX.Element {
   const [file, setFile] = useState<File | null>(null);
   const parseState = useAsync(parse, [file]);
 

@@ -31,7 +31,7 @@ export interface Props {
   onCancel: () => void;
 }
 
-export function BankImportFlow(props: Props): React.JSX.Element {
+export function BankImportForm(props: Props): React.JSX.Element {
   const { showCancelButton, onSubmit, onCancel } = props;
 
   const [file, setFile] = useState<File | null>(null);

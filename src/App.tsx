@@ -6,13 +6,13 @@ import { BankTable } from "./components/tables/BankTable";
 import { YNABTable } from "./components/tables/YNABTable";
 import { Header } from "./Header";
 import {
-  BankImportFlow,
-  type Props as BankImportFlowProps,
-} from "./importForms/BankImportFlow";
+  BankImportForm,
+  type Props as BankImportFormProps,
+} from "./importForms/BankImportForm";
 import {
-  YNABImportFlow,
-  type YNABImportFlowProps,
-} from "./importForms/YNABImportFlow";
+  YNABImportForm,
+  type YNABImportFormProps,
+} from "./importForms/YNABImportForm";
 import { MismatchFiltersList } from "./MismatchFiltersList";
 import { PageLayout } from "./PageLayout";
 import {
@@ -46,7 +46,7 @@ function YNABArea(): React.JSX.Element {
   );
 
   const dispatch = useAppDispatch();
-  const handleSubmit: YNABImportFlowProps["onSubmit"] = (
+  const handleSubmit: YNABImportFormProps["onSubmit"] = (
     transactions,
     account,
     filename,
@@ -98,7 +98,7 @@ function YNABArea(): React.JSX.Element {
           </div>
         </div>
       ) : (
-        <YNABImportFlow
+        <YNABImportForm
           onCancel={() => dispatch(abortReimport({ side: "ynab" }))}
           showCancelButton={ynabImport.status === "reimporting"}
           onSubmit={handleSubmit}
@@ -115,7 +115,7 @@ function BankArea(): React.JSX.Element {
   );
 
   const dispatch = useAppDispatch();
-  const handleSubmit: BankImportFlowProps["onSubmit"] = ({
+  const handleSubmit: BankImportFormProps["onSubmit"] = ({
     filename,
     columnSpecs,
     transactions,
@@ -163,7 +163,7 @@ function BankArea(): React.JSX.Element {
           </div>
         </div>
       ) : (
-        <BankImportFlow
+        <BankImportForm
           onCancel={() => dispatch(abortReimport({ side: "bank" }))}
           showCancelButton={bankImport.status === "reimporting"}
           onSubmit={handleSubmit}
