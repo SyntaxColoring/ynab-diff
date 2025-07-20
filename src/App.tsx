@@ -1,11 +1,18 @@
 import { createSelector } from "@reduxjs/toolkit";
+import type React from "react";
 
 import { Button } from "./components/Button";
 import { BankTable } from "./components/tables/BankTable";
 import { YNABTable } from "./components/tables/YNABTable";
 import { Header } from "./Header";
-import { BankImportFlow } from "./importForms/BankImportFlow";
-import { YNABImportFlow } from "./importForms/YNABImportFlow";
+import {
+  BankImportFlow,
+  type Props as BankImportFlowProps,
+} from "./importForms/BankImportFlow";
+import {
+  YNABImportFlow,
+  type YNABImportFlowProps,
+} from "./importForms/YNABImportFlow";
 import { MismatchFiltersList } from "./MismatchFiltersList";
 import { PageLayout } from "./PageLayout";
 import {
@@ -22,19 +29,48 @@ import {
 import { useAppDispatch, useAppSelector } from "./redux/typedHooks";
 
 export default function App(): React.JSX.Element {
-  const dispatch = useAppDispatch();
+  return (
+    <PageLayout
+      headerArea={<Header />}
+      filterArea={<FilterAreaContents />}
+      ynabArea={<YNABArea />}
+      bankArea={<BankArea />}
+    />
+  );
+}
 
+function YNABArea(): React.JSX.Element {
   const ynabImport = useAppSelector((state) => state.present.tables.ynab);
-  const bankImport = useAppSelector((state) => state.present.tables.bank);
-
   const visibleYNABTransactions = useAppSelector((state) =>
     selectYNABTransactionsPassingFilter(state.present),
   );
-  const visibleBankTransactions = useAppSelector((state) =>
-    selectBankTransactionsPassingFilter(state.present),
-  );
 
-  const ynabArea = (
+  const dispatch = useAppDispatch();
+  const handleSubmit: YNABImportFlowProps["onSubmit"] = (
+    transactions,
+    account,
+    filename,
+  ) => {
+    dispatch(
+      completeYNABImport({
+        account,
+        filename,
+        transactions: transactions.map((transaction, index) => ({
+          transaction,
+          index,
+          isExcludedFromComparison:
+            // Exclude uncleared transactions from the comparison by default
+            // because they probably won't be in the bank's export (though this can depend on the bank).
+            //
+            // Also exclude reconciled transactions by default.
+            // This is more arbitrary and I'm honestly not sure if it's right.
+            transaction.cleared !== "cleared",
+        })),
+      }),
+    );
+  };
+
+  return (
     <section className="h-full">
       {ynabImport.status === "imported" ? (
         <div className="h-full flex flex-col gap-1">
@@ -65,31 +101,39 @@ export default function App(): React.JSX.Element {
         <YNABImportFlow
           onCancel={() => dispatch(abortReimport({ side: "ynab" }))}
           showCancelButton={ynabImport.status === "reimporting"}
-          onSubmit={(transactions, account, filename) => {
-            dispatch(
-              completeYNABImport({
-                account,
-                filename,
-                transactions: transactions.map((transaction, index) => ({
-                  transaction,
-                  index,
-                  isExcludedFromComparison:
-                    // Exclude uncleared transactions from the comparison by default
-                    // because they probably won't be in the bank's export (though this can depend on the bank).
-                    //
-                    // Also exclude reconciled transactions by default.
-                    // This is more arbitrary and I'm honestly not sure if it's right.
-                    transaction.cleared !== "cleared",
-                })),
-              }),
-            );
-          }}
+          onSubmit={handleSubmit}
         />
       )}
     </section>
   );
+}
 
-  const bankArea = (
+function BankArea(): React.JSX.Element {
+  const bankImport = useAppSelector((state) => state.present.tables.bank);
+  const visibleBankTransactions = useAppSelector((state) =>
+    selectBankTransactionsPassingFilter(state.present),
+  );
+
+  const dispatch = useAppDispatch();
+  const handleSubmit: BankImportFlowProps["onSubmit"] = ({
+    filename,
+    columnSpecs,
+    transactions,
+  }) => {
+    dispatch(
+      completeBankImport({
+        filename,
+        columnSpecs,
+        transactions: transactions.map((transaction, index) => ({
+          transaction,
+          index,
+          isExcludedFromComparison: false,
+        })),
+      }),
+    );
+  };
+
+  return (
     <section className="h-full">
       {bankImport.status === "imported" ? (
         <div className="h-full flex flex-col gap-1">
@@ -122,33 +166,10 @@ export default function App(): React.JSX.Element {
         <BankImportFlow
           onCancel={() => dispatch(abortReimport({ side: "bank" }))}
           showCancelButton={bankImport.status === "reimporting"}
-          onSubmit={({ filename, columnSpecs, transactions }) => {
-            dispatch(
-              completeBankImport({
-                filename,
-                columnSpecs,
-                transactions: transactions.map((transaction, index) => ({
-                  transaction,
-                  index,
-                  isExcludedFromComparison: false,
-                })),
-              }),
-            );
-          }}
+          onSubmit={handleSubmit}
         />
       )}
     </section>
-  );
-
-  return (
-    <PageLayout
-      headerArea={<Header />}
-      filterArea={<FilterAreaContents />}
-      {...{
-        ynabArea,
-        bankArea,
-      }}
-    />
   );
 }
 
