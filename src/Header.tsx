@@ -11,7 +11,7 @@ import { useUndoRedoShortcuts } from "./useUndoRedoShortcuts";
 export function Header(): React.JSX.Element {
   // TODO: Title, about, contact, and stuff currency dropdown into a settings dialog
   return (
-    <header className="flex gap-8 items-center justify-between">
+    <header className="flex items-center justify-between gap-8">
       <UndoRedoButtons />
       <CurrencySelector />
     </header>
