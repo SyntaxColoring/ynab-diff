@@ -1,7 +1,9 @@
 import { createSelector } from "@reduxjs/toolkit";
 import type React from "react";
+import { useState } from "react";
 
 import { Button } from "./components/Button";
+import { Modal } from "./components/Modal";
 import { BankTable } from "./components/tables/BankTable";
 import { YNABTable } from "./components/tables/YNABTable";
 import { Header } from "./Header";
@@ -27,15 +29,27 @@ import {
   toggleTransactionExclusion,
 } from "./redux/tablesSlice";
 import { useAppDispatch, useAppSelector } from "./redux/typedHooks";
+import { AboutPageContents } from "./AboutPageContents";
 
 export default function App(): React.JSX.Element {
+  const [dialogOpen, setDialogOpen] = useState(false);
+
   return (
-    <PageLayout
-      headerArea={<Header />}
-      filterArea={<FilterAreaContents />}
-      ynabArea={<YNABArea />}
-      bankArea={<BankArea />}
-    />
+    <>
+      <button onClick={() => setDialogOpen(true)}>Open dialog</button>
+      {dialogOpen && (
+        <Modal onClosed={() => setDialogOpen(false)}>
+          <button onClick={() => setDialogOpen(false)}>Close dialog</button>
+          <AboutPageContents />
+        </Modal>
+      )}
+      <PageLayout
+        headerArea={<Header />}
+        filterArea={<FilterAreaContents />}
+        ynabArea={<YNABArea />}
+        bankArea={<BankArea />}
+      />
+    </>
   );
 }
 
@@ -73,7 +87,7 @@ function YNABArea(): React.JSX.Element {
   return (
     <section className="h-full">
       {ynabImport.status === "imported" ? (
-        <div className="h-full flex flex-col gap-1">
+        <div className="flex h-full flex-col gap-1">
           <div className="flex-0">
             <h2>
               {ynabImport.transactions.length} YNAB transactions{" "}
@@ -136,7 +150,7 @@ function BankArea(): React.JSX.Element {
   return (
     <section className="h-full">
       {bankImport.status === "imported" ? (
-        <div className="h-full flex flex-col gap-1">
+        <div className="flex h-full flex-col gap-1">
           <div className="flex-0">
             <h2>
               {bankImport.transactions.length} Bank transactions{" "}

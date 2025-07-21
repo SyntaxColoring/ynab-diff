@@ -35,6 +35,7 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
+      "react/no-unescaped-entities": ["off"], // Makes it annoying to write prose.
       "react-refresh/only-export-components": [
         "warn",
         { allowConstantExport: true },
