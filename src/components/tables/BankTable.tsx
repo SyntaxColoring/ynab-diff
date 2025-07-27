@@ -1,10 +1,6 @@
-import {
-  type CellEditRequestEvent,
-  type ColDef,
-  type GetRowIdFunc,
-} from "ag-grid-community";
+import { type ColDef, type GetRowIdFunc } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 
 import {
   type BankColumnType,
@@ -12,6 +8,10 @@ import {
   type BankValue,
 } from "../../importProcessing";
 import { BankValueCellRenderer } from "./AmountCellRenderer";
+import {
+  ComparisonCellRenderer,
+  type AdditionalProps as ComparisonCellRendererProps,
+} from "./ComparisonCellRenderer";
 import {
   CustomHeader,
   type AdditionalProps as CustomHeaderProps,
@@ -34,7 +34,7 @@ export interface Props {
   heightMode: "fitContent" | "fillContainer";
 }
 
-type TData = Props["transactions"][number];
+export type TData = Props["transactions"][number];
 
 export function BankTable(props: Props): React.JSX.Element {
   const {
@@ -51,10 +51,14 @@ export function BankTable(props: Props): React.JSX.Element {
     const exclusionColDef: ColDef<TData, boolean> = {
       field: "isExcludedFromComparison",
       headerName: "Exclude",
-      editable: true,
       hide: hideExclusionColumn,
       headerComponent: CustomHeader,
       headerComponentParams: {} satisfies CustomHeaderProps,
+      cellRenderer: ComparisonCellRenderer,
+      cellRendererParams: {
+        thisSide: "bank",
+        onClick: toggleExcluded,
+      } satisfies ComparisonCellRendererProps,
     };
 
     const dataColDefs = columnSpecs.map(
@@ -100,25 +104,14 @@ export function BankTable(props: Props): React.JSX.Element {
     hideColumnTypeControls,
     hideExclusionColumn,
     onChangeColumnTypes,
+    toggleExcluded,
   ]);
-
-  const handleCellEditRequest = useCallback(
-    (params: CellEditRequestEvent<TData, boolean>) => {
-      const { data, newValue } = params;
-      if (newValue != null) {
-        toggleExcluded?.(data.index);
-      }
-    },
-    [toggleExcluded],
-  );
 
   return (
     <AgGridReact
       getRowId={getRowId}
       rowData={transactions}
       columnDefs={colDefs}
-      readOnlyEdit
-      onCellEditRequest={handleCellEditRequest}
       domLayout={heightMode === "fitContent" ? "autoHeight" : "normal"}
     />
   );

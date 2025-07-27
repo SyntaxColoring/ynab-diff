@@ -78,7 +78,7 @@ function NameAndSortIcon(props: {
   const direction = rightAlign ? "flex-row-reverse" : "flex-row";
   return (
     <div
-      className={`${direction} flex w-full cursor-pointer gap-1`}
+      className={`${direction} flex w-full cursor-pointer gap-1 items-center`}
       onClick={onClick}
     >
       <span className="flex-initial overflow-hidden overflow-ellipsis">
@@ -98,9 +98,9 @@ function SortIcon(props: {
 }): JSX.Element {
   switch (props.sortDirection) {
     case "asc":
-      return <>↓</>;
+      return <span className="ag-icon ag-icon-asc"></span>;
     case "desc":
-      return <>↑</>;
+      return <span className="ag-icon ag-icon-desc"></span>;
   }
 }
 

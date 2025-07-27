@@ -1,3 +1,4 @@
+import { Redo2, Undo2 } from "lucide-react";
 import { useCallback } from "react";
 import { ActionCreators as ReduxUndoActionCreators } from "redux-undo";
 
@@ -47,7 +48,10 @@ function UndoRedoButtons(): React.JSX.Element {
         // TODO: aria-keyshortcuts is read redundantly with title. Does it make sense to use both?
         aria-keyshortcuts={shortcuts.undo.instructions.aria}
       >
-        Undo <span aria-hidden>↶</span>
+        <span className="flex gap-1 items-center">
+          <Undo2 height="20px" />
+          <span>Undo</span>
+        </span>
       </Button>
       <Button
         variant="secondary"
@@ -57,7 +61,10 @@ function UndoRedoButtons(): React.JSX.Element {
         // TODO: aria-keyshortcuts is read redundantly with title. Does it make sense to use both?
         aria-keyshortcuts={shortcuts.redo.instructions.aria}
       >
-        Redo <span aria-hidden>↷</span>
+        <span className="flex gap-1 items-center">
+          <Redo2 height="20px" />
+          <span>Redo</span>
+        </span>
       </Button>
     </div>
   );

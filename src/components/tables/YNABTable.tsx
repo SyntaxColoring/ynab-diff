@@ -1,14 +1,15 @@
-import {
-  type CellEditRequestEvent,
-  type ColDef,
-  type GetRowIdFunc,
-} from "ag-grid-community";
+import { type ColDef, type GetRowIdFunc } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
+import type React from "react";
 
 import { type YNABTransaction } from "../../importProcessing";
 import { AmountCellRenderer } from "./AmountCellRenderer";
 import { compareAmounts } from "./compareAmounts";
+import {
+  ComparisonCellRenderer,
+  type AdditionalProps as ComparisonCellRendererProps,
+} from "./ComparisonCellRenderer";
 import {
   CustomHeader,
   type AdditionalProps as CustomHeaderProps,
@@ -26,7 +27,7 @@ export interface YNABProps {
   heightMode: "fitContent" | "fillContainer";
 }
 
-type TData = YNABProps["data"][number];
+export type TData = YNABProps["data"][number];
 
 const STATUS_ORDER = {
   uncleared: 0,
@@ -96,23 +97,17 @@ export function YNABTable(props: YNABProps): React.JSX.Element {
     () => [
       {
         field: "isExcludedFromComparison",
-        headerName: "Exclude",
-        editable: true,
+        headerName: "Comparing",
+        cellRenderer: ComparisonCellRenderer,
+        cellRendererParams: {
+          onClick: toggleExcluded,
+          thisSide: "ynab",
+        } satisfies ComparisonCellRendererProps,
         hide: hideExclusionColumn,
       },
       ...dataColDefs,
     ],
-    [hideExclusionColumn],
-  );
-
-  const handleCellEditRequest = React.useCallback(
-    (params: CellEditRequestEvent<TData, boolean>) => {
-      const { data, newValue } = params;
-      if (newValue != null) {
-        toggleExcluded?.(data.index);
-      }
-    },
-    [toggleExcluded],
+    [hideExclusionColumn, toggleExcluded],
   );
 
   return (
@@ -121,8 +116,6 @@ export function YNABTable(props: YNABProps): React.JSX.Element {
       rowData={data}
       defaultColDef={defaultColDef}
       columnDefs={colDefs}
-      readOnlyEdit
-      onCellEditRequest={handleCellEditRequest}
       domLayout={heightMode === "fitContent" ? "autoHeight" : "normal"}
     />
   );
