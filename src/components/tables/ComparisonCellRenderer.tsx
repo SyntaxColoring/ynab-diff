@@ -52,22 +52,17 @@ export function ComparisonCellRenderer(props: Props): JSX.Element {
   }, [eGridCell, handleClick]);
 
   return (
-    <span className="h-full w-full flex items-center">
-      <button
-        ref={controlRef}
-        aria-pressed={!isExcludedFromComparison}
-        onClick={handleClick}
-        // With ag-grid taking charge of keyboard navigation, it's probably not possible for
-        // this element to ever be tabbed to "naturally" via the browser's default behavior.
-        // Just for predictability, let's formalize that by passing -1 to opt out of the
-        // browser default tabbing.
-        tabIndex={-1}
-      >
-        <ComparedIcon
-          thisSide={thisSide}
-          compared={!isExcludedFromComparison}
-        />
-      </button>
-    </span>
+    <button
+      ref={controlRef}
+      aria-pressed={!isExcludedFromComparison}
+      onClick={handleClick}
+      // With ag-grid taking charge of keyboard navigation, it's probably not possible for
+      // this element to ever be tabbed to "naturally" via the browser's default behavior.
+      // Just for predictability, let's formalize that by passing -1 to opt out of the
+      // browser default tabbing.
+      tabIndex={-1}
+    >
+      <ComparedIcon thisSide={thisSide} compared={!isExcludedFromComparison} />
+    </button>
   );
 }

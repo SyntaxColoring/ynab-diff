@@ -1,0 +1,11 @@
+.centerCellContents {
+  :global(.ag-cell-wrapper) {
+    height: 100%;
+  }
+
+  :global(.ag-cell-value) {
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+}

@@ -5,6 +5,7 @@ import type React from "react";
 
 import { type YNABTransaction } from "../../importProcessing";
 import { AmountCellRenderer } from "./AmountCellRenderer";
+import styles from "./centerCellContents.module.css";
 import { compareAmounts } from "./compareAmounts";
 import {
   ComparisonCellRenderer,
@@ -104,6 +105,7 @@ export function YNABTable(props: YNABProps): React.JSX.Element {
           thisSide: "ynab",
         } satisfies ComparisonCellRendererProps,
         hide: hideExclusionColumn,
+        cellClass: styles.centerCellContents,
       },
       ...dataColDefs,
     ],
@@ -117,6 +119,8 @@ export function YNABTable(props: YNABProps): React.JSX.Element {
       defaultColDef={defaultColDef}
       columnDefs={colDefs}
       domLayout={heightMode === "fitContent" ? "autoHeight" : "normal"}
+      enableCellTextSelection
+      ensureDomOrder // For screen readers and text selection.
     />
   );
 }

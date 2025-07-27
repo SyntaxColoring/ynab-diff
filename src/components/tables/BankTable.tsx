@@ -8,6 +8,7 @@ import {
   type BankValue,
 } from "../../importProcessing";
 import { BankValueCellRenderer } from "./AmountCellRenderer";
+import styles from "./centerCellContents.module.css";
 import {
   ComparisonCellRenderer,
   type AdditionalProps as ComparisonCellRendererProps,
@@ -59,6 +60,7 @@ export function BankTable(props: Props): React.JSX.Element {
         thisSide: "bank",
         onClick: toggleExcluded,
       } satisfies ComparisonCellRendererProps,
+      cellClass: styles.centerCellContents,
     };
 
     const dataColDefs = columnSpecs.map(
@@ -113,6 +115,8 @@ export function BankTable(props: Props): React.JSX.Element {
       rowData={transactions}
       columnDefs={colDefs}
       domLayout={heightMode === "fitContent" ? "autoHeight" : "normal"}
+      enableCellTextSelection
+      ensureDomOrder // For screen readers and text selection.
     />
   );
 }
