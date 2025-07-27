@@ -8,6 +8,7 @@ import React, { useMemo } from "react";
 
 import { type YNABTransaction } from "../../importProcessing";
 import { AmountCellRenderer } from "./AmountCellRenderer";
+import { compareAmounts } from "./compareAmounts";
 import {
   CustomHeader,
   type AdditionalProps as CustomHeaderProps,
@@ -27,11 +28,25 @@ export interface YNABProps {
 
 type TData = YNABProps["data"][number];
 
+const STATUS_ORDER = {
+  uncleared: 0,
+  cleared: 1,
+  reconciled: 2,
+} as const;
+
+const compareClearedStatuses: ColDef<
+  TData,
+  TData["transaction"]["cleared"]
+>["comparator"] = (a, b) => {
+  if (a == null || b == null) return 0;
+  else return STATUS_ORDER[a] - STATUS_ORDER[b];
+};
+
 const defaultColDef: ColDef<TData, unknown> = {
   headerComponent: CustomHeader,
 };
 
-const dataColDefs: ColDef<TData, unknown>[] = [
+const dataColDefs: ColDef<TData>[] = [
   {
     field: "transaction.flag",
     headerName: "Flag",
@@ -64,11 +79,13 @@ const dataColDefs: ColDef<TData, unknown>[] = [
       rightAlign: true,
     } satisfies CustomHeaderProps,
     cellRenderer: AmountCellRenderer,
+    comparator: compareAmounts,
   },
   {
     field: "transaction.cleared",
     headerName: "Cleared",
     cellRenderer: StatusIconCellRenderer,
+    comparator: compareClearedStatuses,
   },
 ];
 

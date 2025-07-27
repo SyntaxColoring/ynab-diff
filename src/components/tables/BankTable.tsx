@@ -144,6 +144,7 @@ function comparator(
     (a.type === "inflow" || a.type === "outflow") &&
     (b.type === "inflow" || b.type === "outflow")
   ) {
+    // TODO: Deduplicate with compareAmounts.
     return a.amount.intValue - b.amount.intValue;
   } else {
     return a.rawValue.localeCompare(b.rawValue);
