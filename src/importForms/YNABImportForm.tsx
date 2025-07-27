@@ -74,7 +74,9 @@ export function YNABImportForm({
           title={
             parseState.result == null
               ? "To continue, select a file"
-              : "To continue, select an account"
+              : selectedAccount == null
+                ? "To continue, select an account"
+                : undefined
           }
           onClick={() => {
             if (parseState.result != null && selectedAccount !== null) {
