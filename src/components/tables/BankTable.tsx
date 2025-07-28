@@ -50,7 +50,7 @@ export function BankTable(props: Props): React.JSX.Element {
   const colDefs = useMemo(() => {
     const exclusionColDef: ColDef<TData, boolean> = {
       field: "isExcludedFromComparison",
-      headerName: "Exclude",
+      headerName: "Comparing",
       hide: hideExclusionColumn,
       headerComponent: CustomHeader,
       headerComponentParams: {} satisfies CustomHeaderProps,
