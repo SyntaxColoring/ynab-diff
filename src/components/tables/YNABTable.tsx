@@ -119,6 +119,7 @@ export function YNABTable(props: YNABProps): React.JSX.Element {
       defaultColDef={defaultColDef}
       columnDefs={colDefs}
       domLayout={heightMode === "fitContent" ? "autoHeight" : "normal"}
+      suppressDragLeaveHidesColumns
       enableCellTextSelection
       ensureDomOrder // For screen readers and text selection.
     />

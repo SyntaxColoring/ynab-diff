@@ -115,6 +115,7 @@ export function BankTable(props: Props): React.JSX.Element {
       rowData={transactions}
       columnDefs={colDefs}
       domLayout={heightMode === "fitContent" ? "autoHeight" : "normal"}
+      suppressDragLeaveHidesColumns
       enableCellTextSelection
       ensureDomOrder // For screen readers and text selection.
     />
