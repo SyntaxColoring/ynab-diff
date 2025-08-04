@@ -48,66 +48,23 @@ export function BankTable(props: Props): React.JSX.Element {
     toggleExcluded,
   } = props;
 
-  const colDefs = useMemo(() => {
-    const exclusionColDef: ColDef<TData, boolean> = {
-      field: "isExcludedFromComparison",
-      headerName: "Comparing",
-      hide: hideExclusionColumn,
-      headerComponent: CustomHeader,
-      headerComponentParams: {} satisfies CustomHeaderProps,
-      cellRenderer: ComparisonCellRenderer,
-      cellRendererParams: {
-        thisSide: "bank",
-        onClick: toggleExcluded,
-      } satisfies ComparisonCellRendererProps,
-      cellClass: styles.centerCellContents,
-    };
-
-    const dataColDefs = columnSpecs.map(
-      (columnSpec, index): ColDef<TData, BankValue> => ({
-        colId: index.toString(),
-        headerName: columnSpec.name,
-        type: bankColumnIsAmount(columnSpec.type) ? "numericColumn" : undefined,
-        headerComponent: CustomHeader,
-        headerComponentParams: {
-          menuOptions: hideColumnTypeControls
-            ? undefined
-            : [
-                {
-                  label: "Text",
-                  value: "other" satisfies BankColumnType,
-                },
-                {
-                  label: "Inflow",
-                  value: "inflow" satisfies BankColumnType,
-                },
-                {
-                  label: "Outflow",
-                  value: "outflow" satisfies BankColumnType,
-                },
-              ],
-          selectedMenuOption: columnSpec.type,
-          onSelectMenuOption: (newType) => {
-            const newTypes = columnSpecs.map((c) => c.type);
-            newTypes[index] = newType as BankColumnType;
-            onChangeColumnTypes?.(newTypes);
-          },
-          rightAlign: bankColumnIsAmount(columnSpec.type),
-        } satisfies CustomHeaderProps,
-        valueGetter: (params) => params.data?.transaction?.values[index],
-        comparator,
-        cellRenderer: BankValueCellRenderer,
+  const colDefs = useMemo(
+    () =>
+      getColDefs({
+        columnSpecs,
+        hideColumnTypeControls,
+        hideExclusionColumn,
+        onChangeColumnTypes,
+        toggleExcluded,
       }),
-    );
-
-    return [exclusionColDef, ...dataColDefs];
-  }, [
-    columnSpecs,
-    hideColumnTypeControls,
-    hideExclusionColumn,
-    onChangeColumnTypes,
-    toggleExcluded,
-  ]);
+    [
+      columnSpecs,
+      hideColumnTypeControls,
+      hideExclusionColumn,
+      onChangeColumnTypes,
+      toggleExcluded,
+    ],
+  );
 
   return (
     <AgGridReact
@@ -147,4 +104,87 @@ function comparator(
   } else {
     return a.rawValue.localeCompare(b.rawValue);
   }
+}
+
+function getColDefs(
+  props: Pick<
+    Props,
+    | "columnSpecs"
+    | "hideColumnTypeControls"
+    | "hideExclusionColumn"
+    | "onChangeColumnTypes"
+    | "toggleExcluded"
+  >,
+) {
+  const {
+    columnSpecs,
+    hideColumnTypeControls,
+    hideExclusionColumn,
+    onChangeColumnTypes,
+    toggleExcluded,
+  } = props;
+
+  const indexColDef: ColDef<TData, number> = {
+    colId: "index",
+    headerName: "#",
+    valueGetter: (params) =>
+      params.data?.index != null ? params.data?.index + 1 : undefined,
+    type: "numericColumn",
+    headerComponentParams: {
+      rightAlign: true,
+    } satisfies CustomHeaderProps,
+  };
+
+  const exclusionColDef: ColDef<TData, boolean> = {
+    field: "isExcludedFromComparison",
+    headerName: "Comparing",
+    hide: hideExclusionColumn,
+    headerComponent: CustomHeader,
+    headerComponentParams: {} satisfies CustomHeaderProps,
+    cellRenderer: ComparisonCellRenderer,
+    cellRendererParams: {
+      thisSide: "bank",
+      onClick: toggleExcluded,
+    } satisfies ComparisonCellRendererProps,
+    cellClass: styles.centerCellContents,
+  };
+
+  const dataColDefs = columnSpecs.map(
+    (columnSpec, index): ColDef<TData, BankValue> => ({
+      colId: index.toString(),
+      headerName: columnSpec.name,
+      type: bankColumnIsAmount(columnSpec.type) ? "numericColumn" : undefined,
+      headerComponent: CustomHeader,
+      headerComponentParams: {
+        menuOptions: hideColumnTypeControls
+          ? undefined
+          : [
+              {
+                label: "Text",
+                value: "other" satisfies BankColumnType,
+              },
+              {
+                label: "Inflow",
+                value: "inflow" satisfies BankColumnType,
+              },
+              {
+                label: "Outflow",
+                value: "outflow" satisfies BankColumnType,
+              },
+            ],
+        selectedMenuOption: columnSpec.type,
+        onSelectMenuOption: (newType) => {
+          const newTypes = columnSpecs.map((c) => c.type);
+          newTypes[index] = newType as BankColumnType;
+          onChangeColumnTypes?.(newTypes);
+        },
+        rightAlign: bankColumnIsAmount(columnSpec.type),
+      } satisfies CustomHeaderProps,
+      valueGetter: (params) => params.data?.transaction?.values[index],
+      comparator,
+      cellRenderer: BankValueCellRenderer,
+    }),
+  );
+
+  return [indexColDef, exclusionColDef, ...dataColDefs];
 }
