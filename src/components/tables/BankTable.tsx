@@ -75,6 +75,8 @@ export function BankTable(props: Props): React.JSX.Element {
       suppressDragLeaveHidesColumns
       enableCellTextSelection
       ensureDomOrder // For screen readers and text selection.
+      autoSizeStrategy={{ type: "fitCellContents" }}
+      suppressColumnVirtualisation // Interferes with fitCellContents auto-sizing.
     />
   );
 }
