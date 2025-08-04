@@ -1,5 +1,11 @@
 /* Global CSS, Tailwind boilerplate. */
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Restore prior Tailwind behavior of `cursor: pointer` on buttons. */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}

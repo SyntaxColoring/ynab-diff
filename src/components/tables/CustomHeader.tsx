@@ -81,7 +81,7 @@ function NameAndSortIcon(props: {
       className={`${direction} flex w-full cursor-pointer gap-1 items-center`}
       onClick={onClick}
     >
-      <span className="flex-initial overflow-hidden overflow-ellipsis">
+      <span className="flex-initial overflow-hidden text-ellipsis">
         {displayName}
       </span>
       {sortDirection && (

@@ -15,7 +15,7 @@ export function Select({
 }: Props): React.JSX.Element {
   return (
     <select
-      className={className}
+      className={"rounded-sm border bg-stone-50" + " " + className}
       required={required}
       value={value}
       onChange={(event) => onChange?.(event.target.value)}

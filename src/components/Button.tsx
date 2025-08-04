@@ -16,7 +16,7 @@ export function Button(props: Props): React.JSX.Element {
       {...restProps}
       // TODO: Implement "secondary" variant.
       data-variant={variant === "secondary" ? "primary" : variant}
-      className="rounded-sm border-2 bg-stone-50 px-2 py-0.5 transition-colors disabled:cursor-not-allowed data-[variant=cancel]:border-red-700 data-[variant=primary]:border-green-700 data-[variant=primary]:bg-green-700 data-[variant=cancel]:text-red-700 data-[variant=primary]:text-stone-50 data-[variant=cancel]:hover:bg-red-50 data-[variant=cancel]:active:bg-red-100 data-[variant=primary]:active:bg-green-800 data-[variant=primary]:disabled:border-stone-400 data-[variant=primary]:disabled:bg-stone-400"
+      className="rounded-xs border-2 bg-stone-50 px-2 py-0.5 transition-colors disabled:cursor-not-allowed data-[variant=cancel]:border-red-700 data-[variant=primary]:border-green-700 data-[variant=primary]:bg-green-700 data-[variant=cancel]:text-red-700 data-[variant=primary]:text-stone-50 data-[variant=cancel]:hover:bg-red-50 data-[variant=cancel]:active:bg-red-100 data-[variant=primary]:active:bg-green-800 data-[variant=primary]:disabled:border-stone-400 data-[variant=primary]:disabled:bg-stone-400"
     />
   );
 }
