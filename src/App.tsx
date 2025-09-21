@@ -195,26 +195,40 @@ function FilterAreaContents(): React.JSX.Element {
   );
 
   return (
-    <>
-      <section className="col-span-2">
-        <h2>
-          {mismatchCount} mismatched{" "}
-          {mismatchCount == 1 ? "transaction" : "transactions"}
-        </h2>
-        <MismatchFiltersList />
-      </section>
-
-      <section className="col-span-2">
-        <label>
-          Show excluded transactions
-          <input
-            type="checkbox"
-            checked={showingExcludedTransactions}
-            onChange={() => dispatch(toggleShowExcludedFromComparison())}
-          />
-        </label>
-      </section>
-    </>
+    <div className="mx-auto max-w-6xl space-y-4 text-center">
+      <p className="text-lg font-bold">
+        {mismatchCount === 0 ? (
+          <>All transactions match between YNAB and the bank.</>
+        ) : (
+          <>
+            {mismatchCount}{" "}
+            {mismatchCount === 1 ? "transaction is" : "transactions are"} out of
+            sync between YNAB and the bank.
+          </>
+        )}
+      </p>
+      <p>
+        {mismatchCount === 0 ? (
+          <>
+            If this doesn't seem right, check the "Comparing" columns and make
+            sure that all the transactions that you expect are included in the
+            comparison.
+          </>
+        ) : (
+          <>Use these filters to narrow them down.</>
+        )}
+      </p>
+      <MismatchFiltersList />
+      <label>
+        <input
+          className="accent-green-700"
+          type="checkbox"
+          checked={!showingExcludedTransactions}
+          onChange={() => dispatch(toggleShowExcludedFromComparison())}
+        />{" "}
+        Hide transactions that aren't being compared
+      </label>
+    </div>
   );
 }
 

@@ -19,8 +19,8 @@ export function ComparedIcon(props: Props): JSX.Element {
   const otherSideCopy = thisSide === "bank" ? "YNAB" : "bank";
 
   const title = compared
-    ? `This ${thisSideCopy} transaction is included in the comparison. You expect it to also exist on the ${otherSideCopy} side.`
-    : `This ${thisSideCopy} transaction is excluded from the comparison. You don't expect it to exist on the ${otherSideCopy} side.`;
+    ? `This ${thisSideCopy} transaction is included in the comparison, meaning you expect it to have a match on the ${otherSideCopy} side.`
+    : `This ${thisSideCopy} transaction is excluded from the comparison, meaning you don't expect it to have a match on the ${otherSideCopy} side.`;
   return compared ? (
     <SearchCheck {...{ className, ...rest }}>
       <title>{title}</title>
