@@ -1,0 +1,50 @@
+@layer components {
+  .fileInput::file-selector-button {
+    cursor: inherit;
+  }
+
+  .input,
+  .fileInput {
+    cursor: pointer;
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  .input,
+  .fileInput::file-selector-button {
+    padding-inline: calc(var(--spacing) * 2);
+    padding-block: calc(var(--spacing) * 1);
+
+    border-radius: var(--radius-sm);
+    border-width: 1px;
+  }
+
+  .input:disabled,
+  .fileInput:disabled::file-selector-button {
+    background-color: var(--color-stone-400);
+    color: var(--color-stone-50);
+    border-color: transparent;
+  }
+
+  /* TODO: The file selector button isn't behaving exactly right here. Hover state isn't working. */
+  .input:not(:disabled),
+  .fileInput:not(:disabled)::file-selector-button {
+    background-color: var(--color-well);
+    color: inherit;
+    border-color: currentColor;
+    &:hover,
+    &::file-selector-button:hover {
+      background-color: var(--color-stone-100);
+    }
+
+    &.primary {
+      background-color: var(--color-green-700);
+      color: var(--color-green-50);
+      border-color: var(--color-green-950);
+      &:hover {
+        background-color: var(--color-green-600);
+      }
+    }
+  }
+}

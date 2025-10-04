@@ -1,4 +1,4 @@
-import { FileInput } from "../components/FileInput";
+import { FileInput } from "../components/inputs/FileInput";
 
 export default function CSVFileInput({
   onChange,

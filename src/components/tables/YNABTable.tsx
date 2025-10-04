@@ -17,6 +17,7 @@ import {
   type AdditionalProps as CustomHeaderProps,
 } from "./CustomHeader";
 import { StatusIconCellRenderer } from "./StatusIconCellRenderer";
+import { theme } from "./theme";
 
 export interface YNABProps {
   data: {
@@ -50,6 +51,7 @@ export function YNABTable(props: YNABProps): React.JSX.Element {
 
   return (
     <AgGridReact
+      theme={theme}
       getRowId={getRowId}
       rowData={data}
       defaultColDef={defaultColDef}

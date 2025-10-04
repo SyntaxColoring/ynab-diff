@@ -185,9 +185,7 @@ function validateYNABCSVColumns(
 ): asserts unvalidatedCSVRecord is YNABCSVRecord {
   for (const expectedColumn of EXPECTED_YNAB_CSV_COLUMNS) {
     if (typeof unvalidatedCSVRecord[expectedColumn] !== "string") {
-      throw new ParseError(
-        `The "${expectedColumn}" column is missing. Make sure this CSV file was exported from YNAB and try again.`,
-      );
+      throw new ParseError(`The "${expectedColumn}" column is missing.`);
     }
   }
 }
@@ -203,7 +201,7 @@ function ynabTransactionFromCSV(csvRecord: YNABCSVRecord): YNABTransaction {
   else if (rawCleared === "Reconciled") cleared = "reconciled";
   else
     throw new ParseError(
-      `Unrecognized value in "Cleared" column: "${rawCleared}". Make sure this CSV file was exported from YNAB and try again.`,
+      `Unrecognized value in "Cleared" column: "${rawCleared}".`,
     );
 
   const outflow = currency(csvRecord["Outflow"]).subtract(csvRecord["Inflow"]);

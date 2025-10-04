@@ -2,7 +2,8 @@ import type React from "react";
 import { useCallback, useMemo, useState } from "react";
 import { useAsync } from "react-async-hook";
 
-import { Button } from "../components/Button";
+import { Details } from "../components/Details";
+import { Button } from "../components/inputs/Button";
 import { BankTable } from "../components/tables/BankTable";
 import {
   parseBankCSV,
@@ -12,6 +13,7 @@ import {
 } from "../importProcessing";
 import { zipEqualLength } from "../zipEqualLength";
 import CSVFileInput from "./CSVFileInput";
+import { StepList } from "./StepList";
 import { useSelectBankColumnTypes } from "./useSelectBankColumnTypes";
 
 const PREVIEW_TRANSACTION_COUNT = 5;
@@ -100,34 +102,78 @@ export function BankImportForm(props: Props): React.JSX.Element {
         : { disabled: false };
 
   return (
-    <form className="flex h-full flex-col space-y-8">
-      <h1>Import CSV from Bank</h1>
+    <form className="space-y-8">
+      <h1>Bank</h1>
 
-      <CSVFileInput onChange={setFile} />
-
-      {tableData !== null && (
-        <>
-          <BankTable
-            columnSpecs={tableData.columnSpecs}
-            transactions={tableData.previewedTransactions}
-            onChangeColumnTypes={setSelectedBankColumnTypes}
-            hideExclusionColumn
-            heightMode="fitContent"
-          />
-          <PreviewCountText
-            previewTransactionCount={tableData.previewedTransactions.length}
-            totalTransactionCount={tableData.transactions.length}
-          />
-        </>
-      )}
+      <StepList>
+        <StepList.Step number="1">
+          <div className="space-y-2">
+            <StepList.Step.Heading text="Export transactions from your bank or credit card" />
+            <Details>
+              <Details.Summary>Instructions</Details.Summary>
+              <div className="mt-2 space-y-2">
+                <p>
+                  The exact details will depend on your institution. But
+                  generally:
+                </p>
+                <ol className="ml-8 list-decimal space-y-2">
+                  <li>
+                    Look for a way to download a CSV file from pages like
+                    "statements" or "transaction history."
+                  </li>
+                  <li>
+                    Try to download the same date range that you did on the YNAB
+                    side. If you can't match them exactly, err towards including
+                    extra transactions on this side. You can exclude them later.
+                  </li>
+                </ol>
+                <p>
+                  The file needs to have a single header row. If it doesn't, you
+                  might need to prepare it separately in a tool like Excel or
+                  Google Sheets.
+                </p>
+              </div>
+            </Details>
+          </div>
+        </StepList.Step>
+        <StepList.Step number="2">
+          <div className="space-y-2">
+            <StepList.Step.Heading text="Import them here" />
+            <CSVFileInput onChange={setFile} />
+            <p>
+              Your financial info is kept private and will not leave your
+              computer.
+            </p>
+          </div>
+        </StepList.Step>
+        <StepList.Step number="3">
+          <div className="space-y-2">
+            <StepList.Step.Heading text="Designate column types" />
+            {tableData !== null && (
+              <>
+                <BankTable
+                  columnSpecs={tableData.columnSpecs}
+                  transactions={tableData.previewedTransactions}
+                  onChangeColumnTypes={setSelectedBankColumnTypes}
+                  hideExclusionColumn
+                  heightMode="fitContent"
+                />
+                <PreviewCountText
+                  previewTransactionCount={
+                    tableData.previewedTransactions.length
+                  }
+                  totalTransactionCount={tableData.transactions.length}
+                />
+              </>
+            )}
+          </div>
+        </StepList.Step>
+      </StepList>
 
       <div className="flex justify-end gap-4">
-        {showCancelButton && (
-          <Button variant="cancel" onClick={onCancel}>
-            Cancel
-          </Button>
-        )}
+        {showCancelButton && <Button onClick={onCancel}>Cancel</Button>}
         <Button
+          variant="primary"
           disabled={buttonStatus.disabled}
           title={buttonStatus.disabledReason}
           onClick={handleImportClick}

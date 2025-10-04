@@ -2,8 +2,8 @@ import { Redo2, Undo2 } from "lucide-react";
 import { useCallback } from "react";
 import { ActionCreators as ReduxUndoActionCreators } from "redux-undo";
 
-import { Button } from "./components/Button";
-import { Select } from "./components/Select";
+import { Button } from "./components/inputs/Button";
+import { Select } from "./components/inputs/Select";
 import { CURRENCY_CODES } from "./currencyFormatting";
 import { setCurrencyFormat } from "./redux/currencyFormatSlice";
 import { useAppDispatch, useAppSelector } from "./redux/typedHooks";
@@ -75,7 +75,7 @@ function CurrencySelector(): React.JSX.Element {
   const currencyCode = useAppSelector((state) => state.present.currencyFormat);
 
   return (
-    <label className="flex gap-2">
+    <label className="flex items-baseline gap-2">
       <span>Currency format</span>
       <Select
         options={CURRENCY_CODES}

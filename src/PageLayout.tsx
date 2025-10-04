@@ -31,6 +31,6 @@ export function PageLayout({
 
 function Card({ children }: { children: React.ReactNode }): React.JSX.Element {
   return (
-    <div className="overflow-auto rounded-md bg-stone-200 p-2">{children}</div>
+    <div className="overflow-auto rounded-md bg-section-bg p-2">{children}</div>
   );
 }

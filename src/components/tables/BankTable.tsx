@@ -17,6 +17,7 @@ import {
   CustomHeader,
   type AdditionalProps as CustomHeaderProps,
 } from "./CustomHeader";
+import { theme } from "./theme";
 
 export interface Props {
   transactions: {
@@ -68,6 +69,7 @@ export function BankTable(props: Props): React.JSX.Element {
 
   return (
     <AgGridReact
+      theme={theme}
       getRowId={getRowId}
       rowData={transactions}
       columnDefs={colDefs}

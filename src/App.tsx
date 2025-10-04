@@ -1,7 +1,7 @@
 import { createSelector } from "@reduxjs/toolkit";
 import type React from "react";
 
-import { Button } from "./components/Button";
+import { Button } from "./components/inputs/Button";
 import { BankTable } from "./components/tables/BankTable";
 import { YNABTable } from "./components/tables/YNABTable";
 import { Header } from "./Header";

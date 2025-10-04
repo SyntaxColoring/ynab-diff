@@ -1,8 +1,13 @@
+import clsx from "clsx";
+
+import styles from "./inputs.module.css";
+
 export interface Props {
   className?: string;
   onChange?: (value: string) => void;
   options: readonly (string | { value: string; label: string })[];
   required?: boolean;
+  disabled?: boolean;
   value?: string;
 }
 
@@ -11,12 +16,14 @@ export function Select({
   onChange,
   options,
   required,
+  disabled,
   value,
 }: Props): React.JSX.Element {
   return (
     <select
-      className={"rounded-sm border bg-stone-50" + " " + className}
+      className={clsx(styles.input, className)}
       required={required}
+      disabled={disabled}
       value={value}
       onChange={(event) => onChange?.(event.target.value)}
     >
