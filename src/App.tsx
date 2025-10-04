@@ -73,7 +73,7 @@ function YNABArea(): React.JSX.Element {
   return (
     <section className="h-full">
       {ynabImport.status === "imported" ? (
-        <div className="h-full flex flex-col gap-1">
+        <div className="flex h-full flex-col gap-1">
           <div className="flex-0">
             <h2>
               {ynabImport.transactions.length} YNAB transactions{" "}
@@ -136,7 +136,7 @@ function BankArea(): React.JSX.Element {
   return (
     <section className="h-full">
       {bankImport.status === "imported" ? (
-        <div className="h-full flex flex-col gap-1">
+        <div className="flex h-full flex-col gap-1">
           <div className="flex-0">
             <h2>
               {bankImport.transactions.length} Bank transactions{" "}

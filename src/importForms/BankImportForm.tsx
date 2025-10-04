@@ -100,7 +100,7 @@ export function BankImportForm(props: Props): React.JSX.Element {
         : { disabled: false };
 
   return (
-    <form className="h-full flex flex-col space-y-8">
+    <form className="flex h-full flex-col space-y-8">
       <h1>Import CSV from Bank</h1>
 
       <CSVFileInput onChange={setFile} />

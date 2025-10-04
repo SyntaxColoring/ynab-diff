@@ -12,7 +12,7 @@ import { useUndoRedoShortcuts } from "./useUndoRedoShortcuts";
 export function Header(): React.JSX.Element {
   // TODO: Title, about, contact, and stuff currency dropdown into a settings dialog
   return (
-    <header className="flex gap-8 items-center justify-between">
+    <header className="flex items-center justify-between gap-8">
       <UndoRedoButtons />
       <CurrencySelector />
     </header>
@@ -48,7 +48,7 @@ function UndoRedoButtons(): React.JSX.Element {
         // TODO: aria-keyshortcuts is read redundantly with title. Does it make sense to use both?
         aria-keyshortcuts={shortcuts.undo.instructions.aria}
       >
-        <span className="flex gap-1 items-center">
+        <span className="flex items-center gap-1">
           <Undo2 height="20px" />
           <span>Undo</span>
         </span>
@@ -61,7 +61,7 @@ function UndoRedoButtons(): React.JSX.Element {
         // TODO: aria-keyshortcuts is read redundantly with title. Does it make sense to use both?
         aria-keyshortcuts={shortcuts.redo.instructions.aria}
       >
-        <span className="flex gap-1 items-center">
+        <span className="flex items-center gap-1">
           <Redo2 height="20px" />
           <span>Redo</span>
         </span>

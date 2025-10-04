@@ -78,7 +78,7 @@ function NameAndSortIcon(props: {
   const direction = rightAlign ? "flex-row-reverse" : "flex-row";
   return (
     <div
-      className={`${direction} flex w-full cursor-pointer gap-1 items-center`}
+      className={`${direction} flex w-full cursor-pointer items-center gap-1`}
       onClick={onClick}
     >
       <span className="flex-initial overflow-hidden text-ellipsis">
