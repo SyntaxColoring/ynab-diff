@@ -6,4 +6,5 @@
   --color-underlying-bg: var(--color-stone-50);
   --color-section-bg: var(--color-stone-200);
   --color-well: var(--color-stone-50);
+  --color-base-text: var(--color-stone-950);
 }
