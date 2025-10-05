@@ -13,6 +13,7 @@ import {
   YNABImportForm,
   type YNABImportFormProps,
 } from "./importForms/YNABImportForm";
+import { IntroText } from "./IntroText";
 import { MismatchFiltersList } from "./MismatchFiltersList";
 import { PageLayout } from "./PageLayout";
 import {
@@ -32,7 +33,7 @@ export default function App(): React.JSX.Element {
   return (
     <PageLayout
       headerArea={<Header />}
-      filterArea={<FilterAreaContents />}
+      filterArea={<TopArea />}
       ynabArea={<YNABArea />}
       bankArea={<BankArea />}
     />
@@ -171,6 +172,15 @@ function BankArea(): React.JSX.Element {
       )}
     </section>
   );
+}
+
+function TopArea(): React.JSX.Element {
+  const bothImported = useAppSelector(
+    (state) =>
+      state.present.tables.bank.status === "imported" &&
+      state.present.tables.ynab.status === "imported",
+  );
+  return bothImported ? <FilterAreaContents /> : <IntroText />;
 }
 
 function FilterAreaContents(): React.JSX.Element {
