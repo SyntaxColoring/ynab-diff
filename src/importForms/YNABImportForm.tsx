@@ -117,6 +117,7 @@ export function YNABImportForm({
         {showCancelButton && <Button onClick={onCancel}>Cancel</Button>}
         <Button
           variant="primary"
+          type="button"
           disabled={!(parseState.result != null && selectedAccount !== null)}
           title={
             parseState.result == null

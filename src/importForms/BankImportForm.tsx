@@ -173,6 +173,7 @@ export function BankImportForm(props: Props): React.JSX.Element {
       <div className="flex justify-end gap-4">
         {showCancelButton && <Button onClick={onCancel}>Cancel</Button>}
         <Button
+          type="button"
           variant="primary"
           disabled={buttonStatus.disabled}
           title={buttonStatus.disabledReason}

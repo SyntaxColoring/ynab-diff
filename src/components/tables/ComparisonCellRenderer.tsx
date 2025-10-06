@@ -53,6 +53,8 @@ export function ComparisonCellRenderer(props: Props): JSX.Element {
 
   return (
     <button
+      type="button"
+      className="cursor-pointer"
       ref={controlRef}
       aria-pressed={!isExcludedFromComparison}
       onClick={handleClick}

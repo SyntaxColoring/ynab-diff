@@ -41,6 +41,7 @@ function UndoRedoButtons(): React.JSX.Element {
   return (
     <div className="flex gap-2">
       <Button
+        type="button"
         variant="secondary"
         onClick={handleUndo}
         disabled={!canUndo}
@@ -54,6 +55,7 @@ function UndoRedoButtons(): React.JSX.Element {
         </span>
       </Button>
       <Button
+        type="button"
         variant="secondary"
         onClick={handleRedo}
         disabled={!canRedo}

@@ -79,6 +79,7 @@ function YNABArea(): React.JSX.Element {
             <h2>
               {ynabImport.transactions.length} YNAB transactions{" "}
               <Button
+                type="button"
                 variant="secondary"
                 onClick={() => dispatch(beginReimport({ side: "ynab" }))}
               >
@@ -142,6 +143,7 @@ function BankArea(): React.JSX.Element {
             <h2>
               {bankImport.transactions.length} Bank transactions{" "}
               <Button
+                type="button"
                 variant="secondary"
                 onClick={() => dispatch(beginReimport({ side: "bank" }))}
               >
