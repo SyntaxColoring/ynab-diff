@@ -2,6 +2,7 @@ import { Redo2, Undo2 } from "lucide-react";
 import { useCallback } from "react";
 import { ActionCreators as ReduxUndoActionCreators } from "redux-undo";
 
+import { A } from "./components/A";
 import { Button } from "./components/inputs/Button";
 import { Select } from "./components/inputs/Select";
 import { CURRENCY_CODES } from "./currencyFormatting";
@@ -10,11 +11,16 @@ import { useAppDispatch, useAppSelector } from "./redux/typedHooks";
 import { useUndoRedoShortcuts } from "./useUndoRedoShortcuts";
 
 export function Header(): React.JSX.Element {
-  // TODO: Title, about, contact, and stuff currency dropdown into a settings dialog
   return (
-    <header className="flex items-center justify-between gap-8">
-      <UndoRedoButtons />
-      <CurrencySelector />
+    <header className="flex items-center justify-between gap-4">
+      <div className="flex items-center gap-4">
+        <h1 className="text-lg font-semibold">YNAB Diff</h1>
+        <A href="https://github.com/SyntaxColoring/ynab-diff">Source code</A>
+      </div>
+      <div className="flex items-center gap-4">
+        <UndoRedoButtons />
+        <CurrencySelector />
+      </div>
     </header>
   );
 }
@@ -39,7 +45,7 @@ function UndoRedoButtons(): React.JSX.Element {
   });
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-1">
       <Button
         type="button"
         variant="secondary"
@@ -77,7 +83,7 @@ function CurrencySelector(): React.JSX.Element {
   const currencyCode = useAppSelector((state) => state.present.currencyFormat);
 
   return (
-    <label className="flex items-baseline gap-2">
+    <label className="flex items-center gap-2">
       <span>Currency format</span>
       <Select
         options={CURRENCY_CODES}
