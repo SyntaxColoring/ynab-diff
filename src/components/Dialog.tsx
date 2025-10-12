@@ -40,7 +40,7 @@ export function Dialog(props: Props): JSX.Element {
   return (
     <dialog
       ref={underlyingDialogRef}
-      className="mx-auto mt-4 w-lg max-w-[100%] rounded-md bg-section-bg p-3 backdrop:bg-stone-950/50 backdrop:backdrop-blur"
+      className="m-auto w-lg max-w-[100%] max-h-fit rounded-md bg-section-bg p-3 backdrop:bg-stone-950/50 backdrop:backdrop-blur"
       // Relatively new property, seems like React and/or eslint-plugin-react don't have it yet.
       // eslint-disable-next-line react/no-unknown-property
       closedby="any"

@@ -2,6 +2,8 @@ import { ExternalLink, Redo2, Undo2 } from "lucide-react";
 import { useCallback, useRef, type Ref } from "react";
 import { ActionCreators as ReduxUndoActionCreators } from "redux-undo";
 
+
+
 import { A } from "./components/A";
 import { Dialog, type DialogHandle } from "./components/Dialog";
 import { Button } from "./components/inputs/Button";
@@ -11,6 +13,7 @@ import { CURRENCY_CODES } from "./currencyFormatting";
 import { setCurrencyFormat } from "./redux/currencyFormatSlice";
 import { useAppDispatch, useAppSelector } from "./redux/typedHooks";
 import { useUndoRedoShortcuts } from "./useUndoRedoShortcuts";
+
 
 export function Header(): React.JSX.Element {
   const dialogRef = useRef<DialogHandle>(null);
@@ -128,6 +131,13 @@ function ContactDialog(props: { ref: Ref<DialogHandle> }) {
             />
           </A>
         </p>
+        <p>Blah</p>
+        <p>Blah</p>
+        <p>Blah</p>
+        <p>Blah</p>
+        <p>Blah</p>
+        <p>Blah</p>
+        <p>Blah</p>
       </div>
     </Dialog>
   );
